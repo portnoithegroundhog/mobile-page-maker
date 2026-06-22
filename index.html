@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sheet2Site Mobile Builder</title>
-    <!-- Tailwind CSS for modern responsive layout styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for grid & control UI icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Hide scrollbars but keep functionality */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -26,7 +22,6 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
 
-    <!-- App Navigation Header -->
     <header class="bg-slate-850 border-b border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-3">
             <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md shadow-indigo-900/30">
@@ -49,60 +44,57 @@
         </div>
     </header>
 
-    <!-- Main Workspace Container -->
     <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
         
-        <!-- Left Pane: Sheets-Like Grid Editor & Image Resizer -->
+        <!-- Left Pane: Sheets-Like Grid Editor -->
         <section class="lg:col-span-8 flex flex-col gap-6">
             
-            <!-- Page Manager Strip -->
+            <!-- Page Tabs Navigation Strip -->
             <div class="bg-slate-800/50 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1">
                     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-2">Pages:</span>
                     <div id="page-tabs" class="flex gap-2">
-                        <!-- Dynamic page buttons injected here -->
+                        <!-- Dynamic tabs go here -->
                     </div>
                     <button onclick="createNewPage()" class="text-indigo-400 hover:text-indigo-300 p-1.5 rounded-lg hover:bg-slate-800 transition text-sm flex items-center gap-1.5" title="Add Page">
                         <i class="fa-solid fa-plus"></i> <span class="text-xs">New Page</span>
                     </button>
                 </div>
                 
-                <div class="flex items-center gap-2">
+                <div>
                     <button id="delete-page-btn" onclick="deleteCurrentPage()" class="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
                         <i class="fa-solid fa-trash-can"></i> Delete Page
                     </button>
                 </div>
             </div>
 
-            <!-- Google Sheets Style Table Workspace -->
+            <!-- Spreadsheet Grid Editor -->
             <div class="bg-slate-800/30 border border-slate-800 rounded-xl flex flex-col overflow-hidden shadow-xl">
                 <div class="p-4 border-b border-slate-800 bg-slate-800/50 flex flex-wrap justify-between items-center gap-2">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         <h2 class="text-sm font-semibold text-slate-200">Layout Spreadsheet Rows</h2>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="addNewRow()" class="bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-plus"></i> Add Component Row
-                        </button>
-                    </div>
+                    <button onclick="addNewRow()" class="bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Add Component Row
+                    </button>
                 </div>
 
-                <!-- Scrollable Spreadsheet Frame -->
+                <!-- Scrollable Table -->
                 <div class="overflow-x-auto max-w-full">
                     <table class="w-full text-left border-collapse table-auto min-w-[800px]">
                         <thead>
                             <tr class="bg-slate-850 border-b border-slate-800 text-slate-400 text-xs font-semibold uppercase tracking-wider">
                                 <th class="py-3 px-4 text-center w-12">Move</th>
                                 <th class="py-3 px-4 w-40">Component Type</th>
-                                <th class="py-3 px-4">Primary Content / Title</th>
-                                <th class="py-3 px-4">Image Source(s) (URLs/Base64)</th>
-                                <th class="py-3 px-4">Redirect / Link URL</th>
+                                <th class="py-3 px-4">Primary Content / Text / Title</th>
+                                <th class="py-3 px-4">Image(s) (URLs / Base64 comma separated)</th>
+                                <th class="py-3 px-4">Link URL / Redirect Target</th>
                                 <th class="py-3 px-4 text-center w-16">Delete</th>
                             </tr>
                         </thead>
                         <tbody id="spreadsheet-body" class="divide-y divide-slate-800/60">
-                            <!-- Injected by JavaScript -->
+                            <!-- Populated dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -112,21 +104,21 @@
             <div class="bg-slate-800/40 border border-slate-800 rounded-xl p-5 flex flex-col gap-4">
                 <div>
                     <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> Local Image Chooser & Base64 Encoder
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> Local Image Chooser & Base64 Converter
                     </h3>
                     <p class="text-xs text-slate-400 mt-1">
-                        Convert offline pictures or photos into optimized web formats. Avoid using broken local URLs by generating inline image strings!
+                        Select any local image file to optimize, compress, and render directly within your offline-safe code!
                     </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
                     <div class="md:col-span-4">
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Upload Local Image</label>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Select File</label>
                         <input type="file" id="image-picker-input" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-indigo-400 hover:file:bg-slate-750 cursor-pointer bg-slate-900 rounded-lg p-1.5 border border-slate-800" />
                     </div>
                     
                     <div class="md:col-span-3">
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Output Size Preset</label>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Preset Target Width</label>
                         <select id="thumbnail-quality" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-2.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                             <option value="120">Mini Thumbnail (120px)</option>
                             <option value="300" selected>Standard Content Box (300px)</option>
@@ -141,116 +133,289 @@
                     </div>
                 </div>
 
-                <!-- Image Resizer Output Panel -->
+                <!-- Preview of processed Base64 -->
                 <div id="image-output-panel" class="hidden grid-cols-1 md:grid-cols-12 gap-4 bg-slate-900/50 border border-slate-800 p-3.5 rounded-lg">
                     <div class="md:col-span-3 flex justify-center items-center">
                         <img id="image-preview-thumbnail" class="max-h-24 max-w-full rounded-md border border-slate-800 shadow shadow-black/20" src="" alt="Thumbnail" />
                     </div>
                     <div class="md:col-span-9 flex flex-col justify-between gap-2">
                         <div class="text-xs">
-                            <span class="text-slate-400 block font-medium">Inline Optimized Base64 Content String</span>
-                            <span class="text-[10px] text-emerald-400" id="image-info-metrics">Size: Calculating...</span>
+                            <span class="text-slate-400 block font-medium">Compressed Web Base64 Data</span>
+                            <span class="text-[10px] text-emerald-400" id="image-info-metrics">Ready to insert.</span>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="copyGeneratedBase64()" class="flex-1 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 py-1.5 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-copy"></i> Copy Base64 String
+                                <i class="fa-solid fa-copy"></i> Copy Base64 Code
                             </button>
                             <button id="quick-insert-btn" class="flex-1 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 py-1.5 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-arrow-turn-up"></i> Quick-Insert into Current Page
+                                <i class="fa-solid fa-arrow-turn-up"></i> Insert to Current View
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Global Footer Settings -->
             <div class="bg-slate-800/40 border border-slate-800 rounded-xl p-5 flex flex-col gap-4">
                 <div>
                     <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-                        <i class="fa-solid fa-window-minimize text-indigo-400"></i> Global Footer & General Branding Settings
+                        <i class="fa-solid fa-window-minimize text-indigo-400"></i> Global Site Info
                     </h3>
-                    <p class="text-xs text-slate-400 mt-1">This text appears identically at the very bottom of every page.</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Footer Copyright/Branding Text</label>
-                        <input type="text" id="footer-text-input" oninput="updateFooterContent(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="© 2026 My Mobile Page. Built with Sheet2Site." />
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Global Site / Brand Header Name</label>
+                        <input type="text" id="site-title-input" oninput="updateSiteTitle(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="My Mobile Hub" />
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Global Website Name</label>
-                        <input type="text" id="site-title-input" oninput="updateSiteTitle(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="My Mobile Hub" />
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Global Footer Copyright / Info Text</label>
+                        <input type="text" id="footer-text-input" oninput="updateFooterContent(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="© 2026 My Mobile Page. Built with Sheet2Site." />
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Right Pane: Real-Time Mobile Device Mock Preview -->
         <section class="lg:col-span-4 flex flex-col gap-4">
             <div class="sticky top-6 flex flex-col items-center">
                 <div class="text-sm font-semibold text-slate-400 mb-3 flex items-center gap-1.5 self-start">
                     <i class="fa-solid fa-mobile-screen-button text-indigo-400"></i> Live Mock Device View
                 </div>
 
-                <!-- Mock Smartphone Shell Frame -->
+                <!-- Mock smartphone chassis -->
                 <div class="relative mx-auto w-[330px] h-[640px] bg-slate-950 rounded-[44px] p-3.5 shadow-2xl border-4 border-slate-850 ring-8 ring-slate-800/40 flex flex-col overflow-hidden">
-                    
-                    <!-- iPhone Island/Notch Mockup -->
                     <div class="absolute top-2.5 left-1/2 transform -translate-x-1/2 w-28 h-4.5 bg-slate-950 rounded-full z-50 flex items-center justify-between px-3">
                         <span class="w-1.5 h-1.5 rounded-full bg-slate-900"></span>
                         <span class="w-6 h-1 rounded-full bg-slate-900"></span>
                     </div>
 
-                    <!-- Smartphone Screen View Area -->
                     <div class="w-full h-full bg-white rounded-[32px] overflow-hidden flex flex-col text-slate-900 relative">
-                        <!-- Navigation bar of the mobile view -->
+                        <!-- Navigation bar header inside Device -->
                         <nav class="bg-indigo-700 text-white px-4 py-3 flex items-center justify-between shadow-sm shrink-0 mt-2 z-10">
                             <span class="font-bold text-sm tracking-tight" id="preview-brand-name">My Mobile Hub</span>
                             
-                            <!-- Simple Page Dropdown -->
+                            <!-- Simple dropdown selector -->
                             <div class="relative inline-block text-left">
-                                <button onclick="toggleMobileDropdown()" class="bg-indigo-800 hover:bg-indigo-900/40 text-white px-2.5 py-1 rounded text-xs font-semibold inline-flex items-center gap-1 transition focus:outline-none">
+                                <button onclick="toggleMobileDropdown()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-2.5 py-1 rounded text-xs font-semibold inline-flex items-center gap-1 transition focus:outline-none">
                                     <span id="preview-active-page-name">Home</span>
                                     <i class="fa-solid fa-chevron-down text-[9px]"></i>
                                 </button>
                                 <div id="preview-nav-dropdown" class="hidden absolute right-0 mt-1 w-32 bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden z-50 text-slate-800 text-xs">
-                                    <!-- Options injected here -->
+                                    <!-- Dynamic options -->
                                 </div>
                             </div>
                         </nav>
 
-                        <!-- Dynamic Content Stream -->
+                        <!-- Dynamic body content preview -->
                         <div id="preview-body" class="flex-1 overflow-y-auto bg-slate-50 flex flex-col p-3 gap-3 no-scrollbar">
-                            <!-- Injected by Render Engine -->
+                            <!-- Injected by JavaScript -->
                         </div>
 
-                        <!-- Static Footer inside Frame -->
+                        <!-- Footer inside Device -->
                         <footer class="bg-slate-100 text-slate-500 border-t border-slate-200 text-center py-2.5 text-[10px] shrink-0 font-medium" id="preview-footer-text">
                             © 2026 My Mobile Page. Built with Sheet2Site.
                         </footer>
                     </div>
                 </div>
-                
-                <p class="text-[11px] text-slate-400 mt-3 text-center px-4">
-                    Tip: Any changes made in the spreadsheet grids update the mobile view dynamically! You can tap on buttons or drop-down links above to test page flows.
-                </p>
             </div>
         </section>
     </main>
 
-    <!-- UI Custom Toast Notifications -->
     <div id="toast" class="fixed bottom-6 left-6 bg-slate-800 border border-slate-700 px-4 py-3 rounded-xl shadow-2xl text-slate-200 text-xs flex items-center gap-2 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none z-[100]">
         <i class="fa-solid fa-info bg-indigo-600/25 text-indigo-400 p-1.5 rounded-md text-[10px] h-6 w-6 flex items-center justify-center"></i>
         <span id="toast-message">Page updated</span>
     </div>
 
+    <textarea id="export-template" style="display: none;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>[[SITE_TITLE]]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: "Inter", sans-serif; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
+
+    <nav class="bg-indigo-700 text-white px-5 py-4 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-50">
+        <span class="font-extrabold text-base tracking-tight">[[SITE_TITLE]]</span>
+        <div class="relative inline-block text-left">
+            <button onclick="toggleDropdown()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all focus:outline-none shadow-sm">
+                <span id="active-routing-name">Loading...</span>
+                <i class="fa-solid fa-chevron-down text-[9px] opacity-80"></i>
+            </button>
+            <div id="export-nav-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-50 text-slate-800 text-xs py-1"></div>
+        </div>
+    </nav>
+
+    <main id="main-content-stream" class="flex-1 max-w-md mx-auto w-full p-4 flex flex-col gap-4 no-scrollbar"></main>
+
+    <footer class="bg-white text-slate-400 border-t border-slate-100 text-center py-4 text-xs font-medium shrink-0 shadow-inner">
+        [[FOOTER_TEXT]]
+    </footer>
+
     <script>
-        // App State
+        const siteData = [[SITE_DATA]];
+        let activePageIdx = 0;
+        window.carousels = {};
+
+        window.onload = function() {
+            if (window.location.hash) {
+                const targetHash = window.location.hash.substring(1);
+                const foundIndex = siteData.findIndex(function(p) { return cleanHashName(p.name) === targetHash; });
+                if (foundIndex !== -1) {
+                    activePageIdx = foundIndex;
+                }
+            }
+            renderAppScreen();
+
+            window.addEventListener("hashchange", function() {
+                const newHash = window.location.hash.substring(1);
+                const foundIndex = siteData.findIndex(function(p) { return cleanHashName(p.name) === newHash; });
+                if (foundIndex !== -1) {
+                    activePageIdx = foundIndex;
+                    renderAppScreen();
+                }
+            });
+        };
+
+        function cleanHashName(name) {
+            return encodeURIComponent(name.toLowerCase().replace(/\s+/g, "-"));
+        }
+
+        function toggleDropdown() {
+            const list = document.getElementById("export-nav-dropdown");
+            list.classList.toggle("hidden");
+        }
+
+        function switchExportPage(index) {
+            activePageIdx = index;
+            window.location.hash = cleanHashName(siteData[index].name);
+            toggleDropdown();
+            renderAppScreen();
+        }
+
+        function renderAppScreen() {
+            const targetPage = siteData[activePageIdx];
+            document.getElementById("active-routing-name").innerText = targetPage.name;
+            
+            const dropdown = document.getElementById("export-nav-dropdown");
+            dropdown.innerHTML = "";
+            
+            siteData.forEach(function(page, idx) {
+                const item = document.createElement("button");
+                item.className = "w-full text-left px-4 py-2.5 hover:bg-slate-50 transition border-b border-slate-100 last:border-0 font-medium text-slate-700 text-xs flex items-center justify-between";
+                item.innerHTML = "<span>" + page.name + "</span>" + (idx === activePageIdx ? '<i class="fa-solid fa-circle-check text-indigo-600"></i>' : "");
+                item.onclick = function() { switchExportPage(idx); };
+                dropdown.appendChild(item);
+            });
+
+            const mainStream = document.getElementById("main-content-stream");
+            mainStream.innerHTML = "";
+
+            targetPage.rows.forEach(function(row, rowIndex) {
+                const wrapper = document.createElement("div");
+                wrapper.className = "bg-white rounded-2xl shadow-sm border border-slate-100/60 overflow-hidden";
+
+                if (row.type === "header-nav") {
+                    wrapper.className = "bg-slate-900 text-white p-4 rounded-2xl text-center shadow-lg shadow-indigo-950/5";
+                    wrapper.innerHTML = "<h2 class='text-xs uppercase tracking-widest font-extrabold text-indigo-400'>" + (row.content || "Welcome") + "</h2>";
+                } 
+                else if (row.type === "image-carousel") {
+                    const imagesArr = row.images ? row.images.split(",").map(function(s) { return s.trim(); }).filter(Boolean) : [];
+                    if (imagesArr.length > 0) {
+                        window.carousels[rowIndex] = { images: imagesArr, currentIdx: 0 };
+
+                        let dotsHtml = "";
+                        for (let i = 0; i < imagesArr.length; i++) {
+                            const dotClass = (i === 0) ? "w-3 h-1.5 bg-indigo-500" : "w-1.5 h-1.5 bg-slate-300/60";
+                            dotsHtml += "<span class='rounded-full transition-all duration-200 " + dotClass + "'></span>";
+                        }
+
+                        wrapper.innerHTML = 
+                            "<div class='relative w-full h-44 bg-slate-900 overflow-hidden'>" +
+                                "<img id='carousel-img-" + rowIndex + "' src='" + imagesArr[0] + "' class='w-full h-full object-cover transition-all duration-300' onerror=\"this.src='https://placehold.co/600x400/indigo/white?text=No+Image+Found'\"/>" +
+                                "<div class='absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5' id='carousel-indicators-" + rowIndex + "'>" +
+                                    dotsHtml +
+                                "</div>" +
+                                "<button onclick='shiftSlide(" + rowIndex + ", -1)' class='absolute top-1/2 -translate-y-1/2 left-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90'><i class='fa-solid fa-chevron-left'></i></button>" +
+                                "<button onclick='shiftSlide(" + rowIndex + ", 1)' class='absolute top-1/2 -translate-y-1/2 right-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90'><i class='fa-solid fa-chevron-right'></i></button>" +
+                            "</div>" +
+                            (row.content ? "<div class='p-3 text-xs text-slate-500 bg-white font-medium text-center border-t border-slate-50'>" + row.content + "</div>" : "");
+                    }
+                } 
+                else if (row.type === "static-image") {
+                    const imgUrl = row.images ? row.images.trim() : "";
+                    const innerHTML = 
+                        "<div class='relative w-full h-48 bg-slate-100 overflow-hidden'>" +
+                            "<img src='" + (imgUrl || "https://placehold.co/600x400/slate/lightgray?text=Image") + "' class='w-full h-full object-cover' onerror=\"this.src='https://placehold.co/600x400/slate/lightgray?text=Broken+Image+Link'\"/>" +
+                        "</div>" +
+                        (row.content ? "<div class='p-4 text-xs text-slate-700 bg-white border-t border-slate-100/60 leading-relaxed font-semibold'>" + row.content + "</div>" : "");
+
+                    if (row.link) {
+                        wrapper.innerHTML = "<a href='" + row.link + "' class='block hover:opacity-95 transition' target='_blank'>" + innerHTML + "</a>";
+                    } else {
+                        wrapper.innerHTML = innerHTML;
+                    }
+                } 
+                else if (row.type === "text-area") {
+                    wrapper.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100/60 flex flex-col gap-2.5";
+                    wrapper.innerHTML = 
+                        "<p class='text-xs text-slate-600 leading-relaxed font-normal'>" + (row.content || "Description text empty.") + "</p>" +
+                        (row.link ? "<a href='" + row.link + "' target='_blank' class='text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1.5 mt-1'>Read More <i class='fa-solid fa-arrow-right text-[9px]'></i></a>" : "");
+                } 
+                else if (row.type === "embed-iframe") {
+                    if (row.link && row.link.indexOf("<iframe") !== -1) {
+                        wrapper.innerHTML = 
+                            "<div class='relative w-full overflow-hidden leading-none'>" + row.link + "</div>" +
+                            (row.content ? "<div class='p-2.5 text-[10px] text-slate-500 font-semibold bg-slate-50 text-center border-t border-slate-100'>" + row.content + "</div>" : "");
+                    }
+                }
+
+                mainStream.appendChild(wrapper);
+            });
+        }
+
+        function shiftSlide(rowIndex, direction) {
+            const cData = window.carousels[rowIndex];
+            let currentSlideIdx = cData.currentIdx + direction;
+            if (currentSlideIdx < 0) currentSlideIdx = cData.images.length - 1;
+            if (currentSlideIdx >= cData.images.length) currentSlideIdx = 0;
+            cData.currentIdx = currentSlideIdx;
+
+            const img = document.getElementById("carousel-img-" + rowIndex);
+            img.style.opacity = 0;
+            setTimeout(function() {
+                img.src = cData.images[currentSlideIdx];
+                img.style.opacity = 1;
+            }, 120);
+
+            const dots = document.getElementById("carousel-indicators-" + rowIndex).children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === currentSlideIdx) {
+                    dots[i].className = "w-3 h-1.5 rounded-full bg-indigo-500 transition-all duration-200";
+                } else {
+                    dots[i].className = "w-1.5 h-1.5 rounded-full bg-slate-300/60 transition-all duration-200";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+    </textarea>
+
+    <script>
         let siteTitle = "My Mobile Hub";
         let footerText = "© 2026 My Mobile Page. Built with Sheet2Site.";
         let activePageIndex = 0;
-        let generatedBase64Data = ""; // Cached image builder output
+        let generatedBase64Data = "";
 
-        // Base Data Setup: Multipage Support with structured Google Sheets format
+        // Default layout state
         let sitePages = [
             {
                 name: "Home",
@@ -263,13 +428,13 @@
                     },
                     {
                         type: "image-carousel",
-                        content: "Carousel Caption",
+                        content: "Browse our beautiful showcases",
                         images: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600,https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600",
-                        link: "#portfolio"
+                        link: ""
                     },
                     {
                         type: "static-image",
-                        content: "Browse our official merchandise",
+                        content: "Browse our official code templates",
                         images: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=600",
                         link: "https://github.com"
                     },
@@ -281,7 +446,7 @@
                     },
                     {
                         type: "embed-iframe",
-                        content: "Google Map Embed",
+                        content: "Google Map Location Embed",
                         images: "",
                         link: `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434509374!2d144.9537353153158!3d-37.81362797975171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0xf577d1f5b6f53f2c!2sFederation%20Square!5e0!3m2!1sen!2sus!4v1614062000000!5m2!1sen!2sus" width="100%" height="220" style="border:0;" allowfullscreen="" loading="lazy"></iframe>`
                     }
@@ -312,7 +477,6 @@
             }
         ];
 
-        // Boot and startup operations
         window.onload = function() {
             renderPageTabs();
             renderSpreadsheetRows();
@@ -327,7 +491,7 @@
                 const btn = document.createElement('button');
                 btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition " + (
                     activePageIndex === index 
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-950/40' 
+                    ? 'bg-indigo-600 text-white shadow-md' 
                     : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
                 );
                 btn.innerHTML = `<i class="fa-solid fa-file-invoice text-[10px] mr-1.5 opacity-80"></i> ${page.name}`;
@@ -335,7 +499,6 @@
                 tabContainer.appendChild(btn);
             });
 
-            // Toggle deletion ability based on index safety
             const delBtn = document.getElementById('delete-page-btn');
             if (sitePages.length <= 1) {
                 delBtn.classList.add('opacity-40', 'cursor-not-allowed');
@@ -355,7 +518,7 @@
         }
 
         function createNewPage() {
-            const rawName = prompt("Enter a page name (e.g. Portfolio, Contact):");
+            const rawName = prompt("Enter page name (e.g. Contact, Services):");
             if (!rawName) return;
             const pageName = rawName.trim();
             if (pageName === '') return;
@@ -371,7 +534,7 @@
                     },
                     {
                         type: "text-area",
-                        content: `This is your brand new "${pageName}" mobile view structure. Click below to add layout blocks or modify existing spreadsheets.`,
+                        content: `This is your brand new "${pageName}" mobile page. Configure rows below to style the elements.`,
                         images: "",
                         link: ""
                     }
@@ -382,12 +545,12 @@
             renderPageTabs();
             renderSpreadsheetRows();
             renderPreviewDevice();
-            showToast(`Page "${pageName}" added!`);
+            showToast(`Page "${pageName}" created!`);
         }
 
         function deleteCurrentPage() {
             if (sitePages.length <= 1) return;
-            const confirmDel = confirm(`Are you sure you want to delete the page "${sitePages[activePageIndex].name}"?`);
+            const confirmDel = confirm(`Are you sure you want to delete "${sitePages[activePageIndex].name}"?`);
             if (!confirmDel) return;
 
             sitePages.splice(activePageIndex, 1);
@@ -395,7 +558,7 @@
             renderPageTabs();
             renderSpreadsheetRows();
             renderPreviewDevice();
-            showToast("Page deleted");
+            showToast("Page removed.");
         }
 
         function renderSpreadsheetRows() {
@@ -406,7 +569,7 @@
 
             currentRows.forEach((row, rIndex) => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/10 transition duration-150 border-b border-slate-800/40 text-slate-300 text-xs";
+                tr.className = "hover:bg-slate-800/10 transition border-b border-slate-800/40 text-slate-300 text-xs";
                 
                 tr.innerHTML = `
                     <td class="py-2 px-3 text-center">
@@ -429,13 +592,13 @@
                         </select>
                     </td>
                     <td class="py-2 px-3">
-                        <textarea rows="1" oninput="updateRowField(${rIndex}, 'content', this.value)" placeholder="Primary title, caption, text body, or HTML code" class="w-full min-h-[36px] bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y">${row.content}</textarea>
+                        <textarea rows="1" oninput="updateRowField(${rIndex}, 'content', this.value)" placeholder="Primary text, or map iframe tag" class="w-full min-h-[36px] bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y">${row.content}</textarea>
                     </td>
                     <td class="py-2 px-3">
-                        <textarea rows="1" oninput="updateRowField(${rIndex}, 'images', this.value)" placeholder="Comma separated URLs for carousel" class="w-full min-h-[36px] bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y" ${row.type === 'header-nav' || row.type === 'text-area' || row.type === 'embed-iframe' ? 'disabled bg-slate-950/40 border-slate-850/50' : ''}>${row.images}</textarea>
+                        <textarea rows="1" oninput="updateRowField(${rIndex}, 'images', this.value)" placeholder="Image URLs (comma separated)" class="w-full min-h-[36px] bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y" ${row.type === 'header-nav' || row.type === 'text-area' || row.type === 'embed-iframe' ? 'disabled bg-slate-950/40 border-slate-850/50' : ''}>${row.images}</textarea>
                     </td>
                     <td class="py-2 px-3">
-                        <input type="text" oninput="updateRowField(${rIndex}, 'link', this.value)" placeholder="Redirect URL link, or page hash (e.g., #about-us)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${row.link}" />
+                        <input type="text" oninput="updateRowField(${rIndex}, 'link', this.value)" placeholder="Destination link URL" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${row.link}" />
                     </td>
                     <td class="py-2 px-3 text-center">
                         <button onclick="deleteRow(${rIndex})" class="text-slate-500 hover:text-red-400 hover:bg-red-500/15 p-2 rounded transition" title="Delete Row">
@@ -450,8 +613,6 @@
 
         function updateRowField(rowIndex, field, value) {
             sitePages[activePageIndex].rows[rowIndex][field] = value;
-            
-            // Re-render specifically preview without disrupting cell focus on typing
             debounceRenderPreview();
         }
 
@@ -466,29 +627,27 @@
         function addNewRow() {
             sitePages[activePageIndex].rows.push({
                 type: "text-area",
-                content: "Customize this text body. Select custom links or images to attach styling dynamics.",
+                content: "New rich text area block content.",
                 images: "",
                 link: ""
             });
             renderSpreadsheetRows();
             renderPreviewDevice();
-            showToast("New component block added!");
+            showToast("Added new component block.");
         }
 
         function deleteRow(index) {
             sitePages[activePageIndex].rows.splice(index, 1);
             renderSpreadsheetRows();
             renderPreviewDevice();
-            showToast("Component deleted");
+            showToast("Deleted row.");
         }
 
         function moveRow(index, direction) {
             const rows = sitePages[activePageIndex].rows;
             const newIndex = index + direction;
-            
-            if (newIndex < 0 || newIndex >= rows.length) return; // Out of bounds
+            if (newIndex < 0 || newIndex >= rows.length) return;
 
-            // Swap values
             const temp = rows[index];
             rows[index] = rows[newIndex];
             rows[newIndex] = temp;
@@ -502,7 +661,7 @@
             const qualitySelect = document.getElementById('thumbnail-quality');
             
             if (!fileInput.files || !fileInput.files[0]) {
-                alert("Please select a photo file from your hard drive or camera folder first.");
+                alert("Please select a file to process first.");
                 return;
             }
 
@@ -513,44 +672,34 @@
             fileReader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    // Create an offscreen HTML5 canvas to compress layout dimensions
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
 
-                    // Calculate maintaining original aspect ratio details
-                    const originalWidth = img.width;
-                    const originalHeight = img.height;
-                    const scaleFactor = targetWidth / originalWidth;
-                    const targetHeight = Math.round(originalHeight * scaleFactor);
+                    const scaleFactor = targetWidth / img.width;
+                    const targetHeight = Math.round(img.height * scaleFactor);
 
                     canvas.width = targetWidth;
                     canvas.height = targetHeight;
 
-                    // Draw image scaled down on canvas
                     ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                    generatedBase64Data = canvas.toDataURL('image/jpeg', 0.85);
 
-                    // Output optimized jpeg string representation
-                    generatedBase64Data = canvas.toDataURL('image/jpeg', 0.82);
-
-                    // Render to preview layout
                     const previewElement = document.getElementById('image-preview-thumbnail');
                     previewElement.src = generatedBase64Data;
 
                     const metricsElement = document.getElementById('image-info-metrics');
                     const sizeInKB = Math.round((generatedBase64Data.length * 3/4) / 1024);
-                    metricsElement.innerText = `Size Preset: ${targetWidth}px wide | Inline weight: ~${sizeInKB} KB`;
+                    metricsElement.innerText = `Size Preset: ${targetWidth}px | Embedded weight: ~${sizeInKB} KB`;
 
-                    // Show panel
                     document.getElementById('image-output-panel').classList.remove('hidden');
                     document.getElementById('image-output-panel').classList.add('grid');
 
-                    // Bind dynamic inserting helper onto button
                     const insertBtn = document.getElementById('quick-insert-btn');
                     insertBtn.onclick = function() {
                         quickInsertBase64ToTable(generatedBase64Data);
                     };
 
-                    showToast("Image optimized successfully!");
+                    showToast("Optimized image.");
                 };
                 img.src = event.target.result;
             };
@@ -560,39 +709,33 @@
 
         function copyGeneratedBase64() {
             if (!generatedBase64Data) return;
-            
-            // Safe execution across modern systems matching workspace conditions
             const copyTextarea = document.createElement("textarea");
             copyTextarea.value = generatedBase64Data;
             document.body.appendChild(copyTextarea);
             copyTextarea.select();
             document.execCommand("copy");
             document.body.removeChild(copyTextarea);
-
-            showToast("Copied optimized Base64 string to clipboard!");
+            showToast("Copied optimized Base64 string!");
         }
 
         function quickInsertBase64ToTable(base64Str) {
-            // Target first found image block in active page, or append a new one
             let targetRow = sitePages[activePageIndex].rows.find(row => row.type === 'static-image' || row.type === 'image-carousel');
             
             if (targetRow) {
                 if (targetRow.type === 'image-carousel' && targetRow.images !== "") {
-                    // Append to carousel CSV
                     targetRow.images += "," + base64Str;
                 } else {
                     targetRow.images = base64Str;
                 }
-                showToast("Inserted image into existing block!");
+                showToast("Inserted image to active block!");
             } else {
-                // Construct new static image component
                 sitePages[activePageIndex].rows.push({
                     type: "static-image",
-                    content: "Newly added image capture",
+                    content: "Inserted image showcase",
                     images: base64Str,
                     link: ""
                 });
-                showToast("Created a new Image block and inserted data!");
+                showToast("Created static image row with optimized data.");
             }
 
             renderSpreadsheetRows();
@@ -607,7 +750,6 @@
             document.getElementById('preview-active-page-name').innerText = sitePages[activePageIndex].name;
             document.getElementById('preview-footer-text').innerText = footerText;
 
-            // Render mobile-specific dropdown routes
             const dropdownContainer = document.getElementById('preview-nav-dropdown');
             dropdownContainer.innerHTML = '';
             sitePages.forEach((page, index) => {
@@ -621,7 +763,6 @@
                 dropdownContainer.appendChild(opt);
             });
 
-            // Populate preview with mock DOM segments matching active component state
             const currentRows = sitePages[activePageIndex].rows;
 
             currentRows.forEach((row) => {
@@ -633,7 +774,6 @@
                     blockDiv.innerHTML = `<h2 class="text-xs uppercase tracking-widest font-bold text-indigo-400">${row.content || "Welcome Header"}</h2>`;
                 } 
                 else if (row.type === 'image-carousel') {
-                    // Extract image urls/base64 split
                     const imagesArr = row.images ? row.images.split(',').map(s => s.trim()).filter(s => s) : [];
                     
                     if (imagesArr.length === 0) {
@@ -642,7 +782,6 @@
                                 <i class="fa-solid fa-images text-lg text-slate-300"></i> No Carousel Images Supplied
                             </div>`;
                     } else {
-                        // Display primary item of Carousel mock with slider selectors
                         blockDiv.innerHTML = `
                             <div class="relative w-full h-36 bg-slate-900">
                                 <img src="${imagesArr[0]}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/indigo/white?text=No+Image+Found'"/>
@@ -676,7 +815,7 @@
                     blockDiv.className = "bg-white p-3.5 rounded-xl shadow-sm border border-slate-100 flex flex-col gap-2";
                     blockDiv.innerHTML = `
                         <p class="text-xs text-slate-600 leading-relaxed font-normal">${row.content || "Empty description content box."}</p>
-                        ${hasLink ? `<a href="${hasLink}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1 mt-1">Read More Details <i class="fa-solid fa-up-right-from-square text-[8px]"></i></a>` : ''}
+                        ${hasLink ? `<a href="${hasLink}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1.5 mt-1">Read More Details <i class="fa-solid fa-up-right-from-square text-[8px]"></i></a>` : ''}
                     `;
                 } 
                 else if (row.type === 'embed-iframe') {
@@ -698,13 +837,11 @@
             });
         }
 
-        // Toggle state drawer for drop down previews on device
         function toggleMobileDropdown() {
             const list = document.getElementById('preview-nav-dropdown');
             list.classList.toggle('hidden');
         }
 
-        // Input handler connectors
         function updateFooterContent(val) {
             footerText = val;
             document.getElementById('preview-footer-text').innerText = val;
@@ -716,217 +853,21 @@
         }
 
         function triggerReset() {
-            const check = confirm("Do you want to reset the configuration grid back to default tutorial layout?");
+            const check = confirm("Do you want to reset the layout back to default tutorial layout?");
             if (!check) return;
             location.reload();
         }
 
-        function generateCompleteExportHTML() {
-            const pagesJson = JSON.stringify(sitePages);
-            
-            // Build absolute top-level outer structure using normal backticks but absolutely ZERO internal backticks
-            return '<!DOCTYPE html>\n' +
-'<html lang="en" class="h-full">\n' +
-'<head>\n' +
-'    <meta charset="UTF-8">\n' +
-'    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">\n' +
-'    <title>' + siteTitle + '</title>\n' +
-'    <!-- Tailwind CSS Engine for responsive styling -->\n' +
-'    <script src="https://cdn.tailwindcss.com"></sc' + 'ript>\n' +
-'    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">\n' +
-'    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">\n' +
-'    <style>\n' +
-'        body { font-family: "Inter", sans-serif; -webkit-tap-highlight-color: transparent; }\n' +
-'        .no-scrollbar::-webkit-scrollbar { display: none; }\n' +
-'        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }\n' +
-'    </style>\n' +
-'</head>\n' +
-'<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">\n' +
-'\n' +
-'    <!-- Top Site Navigation Header -->\n' +
-'    <nav class="bg-indigo-700 text-white px-5 py-4 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-50">\n' +
-'        <span class="font-extrabold text-base tracking-tight">' + siteTitle + '</span>\n' +
-'        \n' +
-'        <!-- Interactive Dropdown Routing Selector -->\n' +
-'        <div class="relative inline-block text-left">\n' +
-'            <button onclick="toggleExportDropdown()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all focus:outline-none shadow-sm">\n' +
-'                <span id="active-routing-name">Loading...</span>\n' +
-'                <i class="fa-solid fa-chevron-down text-[9px] opacity-80"></i>\n' +
-'            </button>\n' +
-'            <div id="export-nav-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-50 text-slate-800 text-xs py-1">\n' +
-'                <!-- Dropdown page dynamic routing options injected by core framework -->\n' +
-'            </div>\n' +
-'        </div>\n' +
-'    </nav>\n' +
-'\n' +
-'    <!-- Main Content Stream Area -->\n' +
-'    <main id="main-content-stream" class="flex-1 max-w-md mx-full md:mx-auto w-full p-4 flex flex-col gap-4 no-scrollbar">\n' +
-'        <!-- Rendered dynamics will populate here dynamically depending on Hash index -->\n' +
-'    </main>\n' +
-'\n' +
-'    <!-- Unified Standard Footer -->\n' +
-'    <footer class="bg-white text-slate-400 border-t border-slate-100 text-center py-4 text-xs font-medium shrink-0 shadow-inner">\n' +
-'        ' + footerText + '\n' +
-'    </footer>\n' +
-'\n' +
-'    <!-- Site Core Processing Controller Engine -->\n' +
-'    <script>\n' +
-'        // Generated Pages Data Array Matrix\n' +
-'        const siteData = ' + pagesJson + ';\n' +
-'        let activePageIdx = 0;\n' +
-'\n' +
-'        window.onload = function() {\n' +
-'            // Configure Routing Hash Listeners\n' +
-'            if (window.location.hash) {\n' +
-'                const targetHash = window.location.hash.substring(1);\n' +
-'                const foundIndex = siteData.findIndex(function(p) { return cleanHashName(p.name) === targetHash; });\n' +
-'                if (foundIndex !== -1) {\n' +
-'                    activePageIdx = foundIndex;\n' +
-'                }\n' +
-'            }\n' +
-'            renderAppScreen();\n' +
-'\n' +
-'            // Intercept hash change dynamics\n' +
-'            window.addEventListener("hashchange", function() {\n' +
-'                const newHash = window.location.hash.substring(1);\n' +
-'                const foundIndex = siteData.findIndex(function(p) { return cleanHashName(p.name) === newHash; });\n' +
-'                if (foundIndex !== -1) {\n' +
-'                    activePageIdx = foundIndex;\n' +
-'                    renderAppScreen();\n' +
-'                }\n' +
-'            });\n' +
-'        };\n' +
-'\n' +
-'        function cleanHashName(name) {\n' +
-'            return encodeURIComponent(name.toLowerCase().replace(/\\s+/g, "-"));\n' +
-'        }\n' +
-'\n' +
-'        function toggleExportDropdown() {\n' +
-'            const list = document.getElementById("export-nav-dropdown");\n' +
-'            list.classList.toggle("hidden");\n' +
-'        }\n' +
-'\n' +
-'        function switchExportPage(index) {\n' +
-'            activePageIdx = index;\n' +
-'            window.location.hash = cleanHashName(siteData[index].name);\n' +
-'            toggleExportDropdown();\n' +
-'            renderAppScreen();\n' +
-'        }\n' +
-'\n' +
-'        function renderAppScreen() {\n' +
-'            const targetPage = siteData[activePageIdx];\n' +
-'            document.getElementById("active-routing-name").innerText = targetPage.name;\n' +
-'            \n' +
-'            const dropdown = document.getElementById("export-nav-dropdown");\n' +
-'            dropdown.innerHTML = "";\n' +
-'            \n' +
-'            siteData.forEach(function(page, idx) {\n' +
-'                const item = document.createElement("button");\n' +
-'                item.className = "w-full text-left px-4 py-2.5 hover:bg-slate-50 transition border-b border-slate-100 last:border-0 font-medium text-slate-700 text-xs flex items-center justify-between";\n' +
-'                item.innerHTML = "<span>" + page.name + "</span>" + (idx === activePageIdx ? \'<i class="fa-solid fa-circle-check text-indigo-600"></i>\' : "");\n' +
-'                item.onclick = function() { switchExportPage(idx); };\n' +
-'                dropdown.appendChild(item);\n' +
-'            });\n'\n' +
-'            // Populate Content Frame Blocks\n' +
-'            const mainStream = document.getElementById("main-content-stream");\n' +
-'            mainStream.innerHTML = "";\n' +
-'\n' +
-'            targetPage.rows.forEach(function(row, rowIndex) {\n' +
-'                const wrapper = document.createElement("div");\n' +
-'                wrapper.className = "bg-white rounded-2xl shadow-sm border border-slate-100/60 overflow-hidden";\n' +
-'\n' +
-'                if (row.type === "header-nav") {\n' +
-'                    wrapper.className = "bg-slate-900 text-white p-4 rounded-2xl text-center shadow-lg shadow-indigo-950/5";\n' +
-'                    wrapper.innerHTML = "<h2 class=\'text-xs uppercase tracking-widest font-extrabold text-indigo-400\'>" + (row.content || "Welcome") + "</h2>";\n' +
-'                } \n' +
-'                else if (row.type === "image-carousel") {\n' +
-'                    const imagesArr = row.images ? row.images.split(",").map(function(s) { return s.trim(); }).filter(Boolean) : [];\n' +
-'                    if (imagesArr.length > 0) {\n' +
-'                        window.carousels = window.carousels || {};\n' +
-'                        window.carousels[rowIndex] = { images: imagesArr, currentIdx: 0 };\n' +
-'\n' +
-'                        let dotsHtml = "";\n' +
-'                        for (let i = 0; i < imagesArr.length; i++) {\n' +
-'                            const dotClass = (i === 0) ? "w-3 h-1.5 bg-indigo-500" : "w-1.5 h-1.5 bg-slate-300/60";\n' +
-'                            dotsHtml += "<span class=\'rounded-full transition-all duration-200 " + dotClass + "\'></span>";\n' +
-'                        }\n' +
-'\n' +
-'                        wrapper.innerHTML = \n' +
-'                            "<div class=\'relative w-full h-44 bg-slate-900 overflow-hidden\' id=\'carousel-frame-\' + rowIndex + \'>\" +\n' +
-'                                "<img id=\'carousel-img-" + rowIndex + "\' src=\'" + imagesArr[0] + "\' class=\'w-full h-full object-cover transition-all duration-300\' onerror=\\"this.src=\'https://placehold.co/600x400/indigo/white?text=No+Image+Found\'\\"/>" +\n' +
-'                                "<div class=\'absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5\' id=\'carousel-indicators-" + rowIndex + "\'>" +\n' +
-'                                    dotsHtml +\n' +
-'                                "</div>" +\n' +
-'                                "<button onclick=\'shiftSlide(" + rowIndex + ", -1)\' class=\'absolute top-1/2 -translate-y-1/2 left-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90\'><i class=\'fa-solid fa-chevron-left\'></i></button>" +\n' +
-'                                "<button onclick=\'shiftSlide(" + rowIndex + ", 1)\' class=\'absolute top-1/2 -translate-y-1/2 right-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90\'><i class=\'fa-solid fa-chevron-right\'></i></button>" +\n' +
-'                            "</div>" +\n' +
-'                            (row.content ? "<div class=\'p-3 text-xs text-slate-500 bg-white font-medium text-center border-t border-slate-50\'>" + row.content + "</div>" : "");\n' +
-'                    }\n' +
-'                } \n' +
-'                else if (row.type === "static-image") {\n' +
-'                    const imgUrl = row.images ? row.images.trim() : "";\n' +
-'                    const innerHTML = \n' +
-'                        "<div class=\'relative w-full h-48 bg-slate-100 overflow-hidden\'>" +\n' +
-'                            "<img src=\'" + (imgUrl || "https://placehold.co/600x400/slate/lightgray?text=Image") + "\' class=\'w-full h-full object-cover\' onerror=\\"this.src=\'https://placehold.co/600x400/slate/lightgray?text=Broken+Image+Link\'\\"/>" +\n' +
-'                        "</div>" +\n' +
-'                        (row.content ? "<div class=\'p-4 text-xs text-slate-700 bg-white border-t border-slate-100/60 leading-relaxed font-semibold\'>" + row.content + "</div>" : "");\n' +
-'\n' +
-'                    if (row.link) {\n' +
-'                        wrapper.innerHTML = "<a href=\'" + row.link + "\' class=\'block hover:opacity-95 transition\'>" + innerHTML + "</a>";\n' +
-'                    } else {\n' +
-'                        wrapper.innerHTML = innerHTML;\n' +
-'                    }\n' +
-'                } \n' +
-'                else if (row.type === "text-area") {\n' +
-'                    wrapper.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100/60 flex flex-col gap-2.5";\n' +
-'                    wrapper.innerHTML = \n' +
-'                        "<p class=\'text-xs text-slate-600 leading-relaxed font-normal\'>" + (row.content || "Description text empty.") + "</p>" +\n' +
-'                        (row.link ? "<a href=\'" + row.link + "\' class=\'text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1.5 mt-1\'>Read More <i class=\'fa-solid fa-arrow-right text-[9px]\'></i></a>" : "");\n' +
-'                } \n' +
-'                else if (row.type === "embed-iframe") {\n' +
-'                    if (row.link && row.link.indexOf("<iframe") !== -1) {\n' +
-'                        wrapper.innerHTML = \n' +
-'                            "<div class=\'relative w-full overflow-hidden leading-none\'>" + row.link + "</div>" +\n' +
-'                            (row.content ? "<div class=\'p-2.5 text-[10px] text-slate-500 font-semibold bg-slate-50 text-center border-t border-slate-100\'>" + row.content + "</div>" : "");\n' +
-'                    }\n' +
-'                }\n' +
-'\n' +
-'                mainStream.appendChild(wrapper);\n' +
-'            });\n' +
-'        }\n' +
-'\n' +
-'        // Standard slide transition controller\n' +
-'        function shiftSlide(rowIndex, direction) {\n' +
-'            const cData = window.carousels[rowIndex];\n' +
-'            let currentSlideIdx = cData.currentIdx + direction;\n' +
-'            if (currentSlideIdx < 0) currentSlideIdx = cData.images.length - 1;\n' +
-'            if (currentSlideIdx >= cData.images.length) currentSlideIdx = 0;\n' +
-'            cData.currentIdx = currentSlideIdx;\n' +
-'\n' +
-'            const img = document.getElementById("carousel-img-" + rowIndex);\n' +
-'            img.style.opacity = 0;\n' +
-'            setTimeout(function() {\n' +
-'                img.src = cData.images[currentSlideIdx];\n' +
-'                img.style.opacity = 1;\n' +
-'            }, 120);\n'\n' +
-'            const dots = document.getElementById("carousel-indicators-" + rowIndex).children;\n' +
-'            for (let i = 0; i < dots.length; i++) {\n' +
-'                if (i === currentSlideIdx) {\n' +
-'                    dots[i].className = "w-3 h-1.5 rounded-full bg-indigo-500 transition-all duration-200";\n' +
-'                } else {\n' +
-'                    dots[i].className = "w-1.5 h-1.5 rounded-full bg-slate-300/60 transition-all duration-200";\n' +
-'                }\n' +
-'            }\n' +
-'        }\n' +
-'    </script>\n' +
-'</body>\n' +
-'</html>';
-        }
-
-        // Export Triggering Method
         function exportHTML() {
-            const rawOutput = generateCompleteExportHTML();
-            const blob = new Blob([rawOutput], { type: "text/html;charset=utf-8" });
+            // Read template straight out of safe textarea container
+            let template = document.getElementById('export-template').value;
+
+            // Replace standard brackets safe values (no string concat error possible!)
+            template = template.replace(/\[\[SITE_TITLE\]\]/g, siteTitle);
+            template = template.replace(/\[\[FOOTER_TEXT\]\]/g, footerText);
+            template = template.replace('[[SITE_DATA]]', JSON.stringify(sitePages));
+
+            const blob = new Blob([template], { type: "text/html;charset=utf-8" });
             const localURL = URL.createObjectURL(blob);
 
             const downloadLink = document.createElement("a");
@@ -937,7 +878,7 @@
             downloadLink.click();
             document.body.removeChild(downloadLink);
 
-            showToast("Static Mobile Site HTML downloaded!");
+            showToast("Static Mobile Site downloaded successfully!");
         }
 
         function showToast(message) {
