@@ -325,11 +325,11 @@
             
             sitePages.forEach((page, index) => {
                 const btn = document.createElement('button');
-                btn.className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-semibold transition " + (
                     activePageIndex === index 
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-950/40' 
                     : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`;
+                );
                 btn.innerHTML = `<i class="fa-solid fa-file-invoice text-[10px] mr-1.5 opacity-80"></i> ${page.name}`;
                 btn.onclick = () => switchPage(index);
                 tabContainer.appendChild(btn);
@@ -718,208 +718,212 @@
         function triggerReset() {
             const check = confirm("Do you want to reset the configuration grid back to default tutorial layout?");
             if (!check) return;
-            
             location.reload();
         }
 
         function generateCompleteExportHTML() {
-            // Minimize template size by exporting a stateful client router package
             const pagesJson = JSON.stringify(sitePages);
             
-            return `<!DOCTYPE html>
-<html lang="en" class="h-full">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>${siteTitle}</title>
-    <!-- Tailwind CSS Engine for responsive styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
-</head>
-<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
-
-    <!-- Top Site Navigation Header -->
-    <nav class="bg-indigo-700 text-white px-5 py-4 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-50">
-        <span class="font-extrabold text-base tracking-tight">${siteTitle}</span>
-        
-        <!-- Interactive Dropdown Routing Selector -->
-        <div class="relative inline-block text-left">
-            <button onclick="toggleExportDropdown()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all focus:outline-none shadow-sm">
-                <span id="active-routing-name">Loading...</span>
-                <i class="fa-solid fa-chevron-down text-[9px] opacity-80"></i>
-            </button>
-            <div id="export-nav-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-50 text-slate-800 text-xs py-1">
-                <!-- Dropdown page dynamic routing options injected by core framework -->
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content Stream Area -->
-    <main id="main-content-stream" class="flex-1 max-w-md mx-full md:mx-auto w-full p-4 flex flex-col gap-4 no-scrollbar">
-        <!-- Rendered dynamics will populate here dynamically depending on Hash index -->
-    </main>
-
-    <!-- Unified Standard Footer -->
-    <footer class="bg-white text-slate-400 border-t border-slate-100 text-center py-4 text-xs font-medium shrink-0 shadow-inner">
-        ${footerText}
-    </footer>
-
-    <!-- Site Core Processing Controller Engine -->
-    <script>
-        // Generated Pages Data Array Matrix
-        const siteData = ${pagesJson};
-        let activePageIdx = 0;
-
-        window.onload = function() {
-            // Configure Routing Hash Listeners
-            if (window.location.hash) {
-                const targetHash = window.location.hash.substring(1);
-                const foundIndex = siteData.findIndex(page => cleanHashName(page.name) === targetHash);
-                if (foundIndex !== -1) {
-                    activePageIdx = foundIndex;
-                }
-            }
-            renderAppScreen();
-
-            // Intercept hash change dynamics
-            window.addEventListener('hashchange', () => {
-                const newHash = window.location.hash.substring(1);
-                const foundIndex = siteData.findIndex(page => cleanHashName(page.name) === newHash);
-                if (foundIndex !== -1) {
-                    activePageIdx = foundIndex;
-                    renderAppScreen();
-                }
-            });
-        };
-
-        function cleanHashName(name) {
-            return encodeURIComponent(name.toLowerCase().replace(/\\s+/g, '-'));
+            // Build absolute top-level outer structure using normal backticks but absolutely ZERO internal backticks
+            return '<!DOCTYPE html>\n' +
+'<html lang="en" class="h-full">\n' +
+'<head>\n' +
+'    <meta charset="UTF-8">\n' +
+'    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">\n' +
+'    <title>' + siteTitle + '</title>\n' +
+'    <!-- Tailwind CSS Engine for responsive styling -->\n' +
+'    <script src="https://cdn.tailwindcss.com"></sc' + 'ript>\n' +
+'    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">\n' +
+'    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">\n' +
+'    <style>\n' +
+'        body { font-family: "Inter", sans-serif; -webkit-tap-highlight-color: transparent; }\n' +
+'        .no-scrollbar::-webkit-scrollbar { display: none; }\n' +
+'        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }\n' +
+'    </style>\n' +
+'</head>\n' +
+'<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">\n' +
+'\n' +
+'    <!-- Top Site Navigation Header -->\n' +
+'    <nav class="bg-indigo-700 text-white px-5 py-4 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-50">\n' +
+'        <span class="font-extrabold text-base tracking-tight">' + siteTitle + '</span>\n' +
+'        \n' +
+'        <!-- Interactive Dropdown Routing Selector -->\n' +
+'        <div class="relative inline-block text-left">\n' +
+'            <button onclick="toggleExportDropdown()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all focus:outline-none shadow-sm">\n' +
+'                <span id="active-routing-name">Loading...</span>\n' +
+'                <i class="fa-solid fa-chevron-down text-[9px] opacity-80"></i>\n' +
+'            </button>\n' +
+'            <div id="export-nav-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-50 text-slate-800 text-xs py-1">\n' +
+'                <!-- Dropdown page dynamic routing options injected by core framework -->\n' +
+'            </div>\n' +
+'        </div>\n' +
+'    </nav>\n' +
+'\n' +
+'    <!-- Main Content Stream Area -->\n' +
+'    <main id="main-content-stream" class="flex-1 max-w-md mx-full md:mx-auto w-full p-4 flex flex-col gap-4 no-scrollbar">\n' +
+'        <!-- Rendered dynamics will populate here dynamically depending on Hash index -->\n' +
+'    </main>\n' +
+'\n' +
+'    <!-- Unified Standard Footer -->\n' +
+'    <footer class="bg-white text-slate-400 border-t border-slate-100 text-center py-4 text-xs font-medium shrink-0 shadow-inner">\n' +
+'        ' + footerText + '\n' +
+'    </footer>\n' +
+'\n' +
+'    <!-- Site Core Processing Controller Engine -->\n' +
+'    <script>\n' +
+'        // Generated Pages Data Array Matrix\n' +
+'        const siteData = ' + pagesJson + ';\n' +
+'        let activePageIdx = 0;\n' +
+'\n' +
+'        window.onload = function() {\n' +
+'            // Configure Routing Hash Listeners\n' +
+'            if (window.location.hash) {\n' +
+'                const targetHash = window.location.hash.substring(1);\n' +
+'                const foundIndex = siteData.findIndex(function(p) { return cleanHashName(p.name) === targetHash; });\n' +
+'                if (foundIndex !== -1) {\n' +
+'                    activePageIdx = foundIndex;\n' +
+'                }\n' +
+'            }\n' +
+'            renderAppScreen();\n' +
+'\n' +
+'            // Intercept hash change dynamics\n' +
+'            window.addEventListener("hashchange", function() {\n' +
+'                const newHash = window.location.hash.substring(1);\n' +
+'                const foundIndex = siteData.findIndex(function(p) { return cleanHashName(p.name) === newHash; });\n' +
+'                if (foundIndex !== -1) {\n' +
+'                    activePageIdx = foundIndex;\n' +
+'                    renderAppScreen();\n' +
+'                }\n' +
+'            });\n' +
+'        };\n' +
+'\n' +
+'        function cleanHashName(name) {\n' +
+'            return encodeURIComponent(name.toLowerCase().replace(/\\s+/g, "-"));\n' +
+'        }\n' +
+'\n' +
+'        function toggleExportDropdown() {\n' +
+'            const list = document.getElementById("export-nav-dropdown");\n' +
+'            list.classList.toggle("hidden");\n' +
+'        }\n' +
+'\n' +
+'        function switchExportPage(index) {\n' +
+'            activePageIdx = index;\n' +
+'            window.location.hash = cleanHashName(siteData[index].name);\n' +
+'            toggleExportDropdown();\n' +
+'            renderAppScreen();\n' +
+'        }\n' +
+'\n' +
+'        function renderAppScreen() {\n' +
+'            const targetPage = siteData[activePageIdx];\n' +
+'            document.getElementById("active-routing-name").innerText = targetPage.name;\n' +
+'            \n' +
+'            const dropdown = document.getElementById("export-nav-dropdown");\n' +
+'            dropdown.innerHTML = "";\n' +
+'            \n' +
+'            siteData.forEach(function(page, idx) {\n' +
+'                const item = document.createElement("button");\n' +
+'                item.className = "w-full text-left px-4 py-2.5 hover:bg-slate-50 transition border-b border-slate-100 last:border-0 font-medium text-slate-700 text-xs flex items-center justify-between";\n' +
+'                item.innerHTML = "<span>" + page.name + "</span>" + (idx === activePageIdx ? \'<i class="fa-solid fa-circle-check text-indigo-600"></i>\' : "");\n' +
+'                item.onclick = function() { switchExportPage(idx); };\n' +
+'                dropdown.appendChild(item);\n' +
+'            });\n'\n' +
+'            // Populate Content Frame Blocks\n' +
+'            const mainStream = document.getElementById("main-content-stream");\n' +
+'            mainStream.innerHTML = "";\n' +
+'\n' +
+'            targetPage.rows.forEach(function(row, rowIndex) {\n' +
+'                const wrapper = document.createElement("div");\n' +
+'                wrapper.className = "bg-white rounded-2xl shadow-sm border border-slate-100/60 overflow-hidden";\n' +
+'\n' +
+'                if (row.type === "header-nav") {\n' +
+'                    wrapper.className = "bg-slate-900 text-white p-4 rounded-2xl text-center shadow-lg shadow-indigo-950/5";\n' +
+'                    wrapper.innerHTML = "<h2 class=\'text-xs uppercase tracking-widest font-extrabold text-indigo-400\'>" + (row.content || "Welcome") + "</h2>";\n' +
+'                } \n' +
+'                else if (row.type === "image-carousel") {\n' +
+'                    const imagesArr = row.images ? row.images.split(",").map(function(s) { return s.trim(); }).filter(Boolean) : [];\n' +
+'                    if (imagesArr.length > 0) {\n' +
+'                        window.carousels = window.carousels || {};\n' +
+'                        window.carousels[rowIndex] = { images: imagesArr, currentIdx: 0 };\n' +
+'\n' +
+'                        let dotsHtml = "";\n' +
+'                        for (let i = 0; i < imagesArr.length; i++) {\n' +
+'                            const dotClass = (i === 0) ? "w-3 h-1.5 bg-indigo-500" : "w-1.5 h-1.5 bg-slate-300/60";\n' +
+'                            dotsHtml += "<span class=\'rounded-full transition-all duration-200 " + dotClass + "\'></span>";\n' +
+'                        }\n' +
+'\n' +
+'                        wrapper.innerHTML = \n' +
+'                            "<div class=\'relative w-full h-44 bg-slate-900 overflow-hidden\' id=\'carousel-frame-\' + rowIndex + \'>\" +\n' +
+'                                "<img id=\'carousel-img-" + rowIndex + "\' src=\'" + imagesArr[0] + "\' class=\'w-full h-full object-cover transition-all duration-300\' onerror=\\"this.src=\'https://placehold.co/600x400/indigo/white?text=No+Image+Found\'\\"/>" +\n' +
+'                                "<div class=\'absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5\' id=\'carousel-indicators-" + rowIndex + "\'>" +\n' +
+'                                    dotsHtml +\n' +
+'                                "</div>" +\n' +
+'                                "<button onclick=\'shiftSlide(" + rowIndex + ", -1)\' class=\'absolute top-1/2 -translate-y-1/2 left-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90\'><i class=\'fa-solid fa-chevron-left\'></i></button>" +\n' +
+'                                "<button onclick=\'shiftSlide(" + rowIndex + ", 1)\' class=\'absolute top-1/2 -translate-y-1/2 right-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90\'><i class=\'fa-solid fa-chevron-right\'></i></button>" +\n' +
+'                            "</div>" +\n' +
+'                            (row.content ? "<div class=\'p-3 text-xs text-slate-500 bg-white font-medium text-center border-t border-slate-50\'>" + row.content + "</div>" : "");\n' +
+'                    }\n' +
+'                } \n' +
+'                else if (row.type === "static-image") {\n' +
+'                    const imgUrl = row.images ? row.images.trim() : "";\n' +
+'                    const innerHTML = \n' +
+'                        "<div class=\'relative w-full h-48 bg-slate-100 overflow-hidden\'>" +\n' +
+'                            "<img src=\'" + (imgUrl || "https://placehold.co/600x400/slate/lightgray?text=Image") + "\' class=\'w-full h-full object-cover\' onerror=\\"this.src=\'https://placehold.co/600x400/slate/lightgray?text=Broken+Image+Link\'\\"/>" +\n' +
+'                        "</div>" +\n' +
+'                        (row.content ? "<div class=\'p-4 text-xs text-slate-700 bg-white border-t border-slate-100/60 leading-relaxed font-semibold\'>" + row.content + "</div>" : "");\n' +
+'\n' +
+'                    if (row.link) {\n' +
+'                        wrapper.innerHTML = "<a href=\'" + row.link + "\' class=\'block hover:opacity-95 transition\'>" + innerHTML + "</a>";\n' +
+'                    } else {\n' +
+'                        wrapper.innerHTML = innerHTML;\n' +
+'                    }\n' +
+'                } \n' +
+'                else if (row.type === "text-area") {\n' +
+'                    wrapper.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100/60 flex flex-col gap-2.5";\n' +
+'                    wrapper.innerHTML = \n' +
+'                        "<p class=\'text-xs text-slate-600 leading-relaxed font-normal\'>" + (row.content || "Description text empty.") + "</p>" +\n' +
+'                        (row.link ? "<a href=\'" + row.link + "\' class=\'text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1.5 mt-1\'>Read More <i class=\'fa-solid fa-arrow-right text-[9px]\'></i></a>" : "");\n' +
+'                } \n' +
+'                else if (row.type === "embed-iframe") {\n' +
+'                    if (row.link && row.link.indexOf("<iframe") !== -1) {\n' +
+'                        wrapper.innerHTML = \n' +
+'                            "<div class=\'relative w-full overflow-hidden leading-none\'>" + row.link + "</div>" +\n' +
+'                            (row.content ? "<div class=\'p-2.5 text-[10px] text-slate-500 font-semibold bg-slate-50 text-center border-t border-slate-100\'>" + row.content + "</div>" : "");\n' +
+'                    }\n' +
+'                }\n' +
+'\n' +
+'                mainStream.appendChild(wrapper);\n' +
+'            });\n' +
+'        }\n' +
+'\n' +
+'        // Standard slide transition controller\n' +
+'        function shiftSlide(rowIndex, direction) {\n' +
+'            const cData = window.carousels[rowIndex];\n' +
+'            let currentSlideIdx = cData.currentIdx + direction;\n' +
+'            if (currentSlideIdx < 0) currentSlideIdx = cData.images.length - 1;\n' +
+'            if (currentSlideIdx >= cData.images.length) currentSlideIdx = 0;\n' +
+'            cData.currentIdx = currentSlideIdx;\n' +
+'\n' +
+'            const img = document.getElementById("carousel-img-" + rowIndex);\n' +
+'            img.style.opacity = 0;\n' +
+'            setTimeout(function() {\n' +
+'                img.src = cData.images[currentSlideIdx];\n' +
+'                img.style.opacity = 1;\n' +
+'            }, 120);\n'\n' +
+'            const dots = document.getElementById("carousel-indicators-" + rowIndex).children;\n' +
+'            for (let i = 0; i < dots.length; i++) {\n' +
+'                if (i === currentSlideIdx) {\n' +
+'                    dots[i].className = "w-3 h-1.5 rounded-full bg-indigo-500 transition-all duration-200";\n' +
+'                } else {\n' +
+'                    dots[i].className = "w-1.5 h-1.5 rounded-full bg-slate-300/60 transition-all duration-200";\n' +
+'                }\n' +
+'            }\n' +
+'        }\n' +
+'    </script>\n' +
+'</body>\n' +
+'</html>';
         }
 
-        function toggleExportDropdown() {
-            const list = document.getElementById('export-nav-dropdown');
-            list.classList.toggle('hidden');
-        }
-
-        function switchExportPage(index) {
-            activePageIdx = index;
-            window.location.hash = cleanHashName(siteData[index].name);
-            toggleExportDropdown();
-            renderAppScreen();
-        }
-
-        function renderAppScreen() {
-            const targetPage = siteData[activePageIdx];
-            document.getElementById('active-routing-name').innerText = targetPage.name;
-            
-            const dropdown = document.getElementById('export-nav-dropdown');
-            dropdown.innerHTML = '';
-            
-            siteData.forEach((page, idx) => {
-                const item = document.createElement('button');
-                item.className = "w-full text-left px-4 py-2.5 hover:bg-slate-50 transition border-b border-slate-100 last:border-0 font-medium text-slate-700 text-xs block flex items-center justify-between";
-                item.innerHTML = \`<span>\${page.name}</span> \${idx === activePageIdx ? '<i class="fa-solid fa-circle-check text-indigo-600"></i>' : ''}\`;
-                item.onclick = () => switchExportPage(idx);
-                dropdown.appendChild(item);
-            });
-
-            // Populate Content Frame Blocks
-            const mainStream = document.getElementById('main-content-stream');
-            mainStream.innerHTML = '';
-
-            targetPage.rows.forEach(row => {
-                const wrapper = document.createElement('div');
-                wrapper.className = "bg-white rounded-2xl shadow-sm border border-slate-100/60 overflow-hidden";
-
-                if (row.type === 'header-nav') {
-                    wrapper.className = "bg-slate-900 text-white p-4 rounded-2xl text-center shadow-lg shadow-indigo-950/5";
-                    wrapper.innerHTML = \`<h2 class="text-xs uppercase tracking-widest font-extrabold text-indigo-400">\${row.content || "Header Header"}</h2>\`;
-                } 
-                else if (row.type === 'image-carousel') {
-                    const imagesArr = row.images ? row.images.split(',').map(s => s.trim()).filter(s => s) : [];
-                    if (imagesArr.length > 0) {
-                        wrapper.innerHTML = \`
-                            <div class="relative w-full h-44 bg-slate-900 overflow-hidden" id="carousel-frame">
-                                <img id="carousel-img" src="\${imagesArr[0]}" class="w-full h-full object-cover transition-all duration-300" onerror="this.src='https://placehold.co/600x400/indigo/white?text=No+Image+Found'"/>
-                                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" id="carousel-indicators">
-                                    \${imagesArr.map((_, i) => \`<span class="w-1.5 h-1.5 rounded-full transition-all duration-200 \${i === 0 ? 'bg-indigo-500 w-3' : 'bg-slate-300/60'}"></span>\`).join('')}
-                                </div>
-                                <button onclick="shiftSlide(-1, \${JSON.stringify(imagesArr).replace(/"/g, '&quot;')})" class="absolute top-1/2 -translate-y-1/2 left-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90"><i class="fa-solid fa-chevron-left"></i></button>
-                                <button onclick="shiftSlide(1, \${JSON.stringify(imagesArr).replace(/"/g, '&quot;')})" class="absolute top-1/2 -translate-y-1/2 right-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90"><i class="fa-solid fa-chevron-right"></i></button>
-                            </div>
-                            \${row.content ? \`<div class="p-3 text-xs text-slate-500 bg-white font-medium text-center border-t border-slate-50">\${row.content}</div>\` : ''}
-                        \`;
-                    }
-                } 
-                else if (row.type === 'static-image') {
-                    const imgUrl = row.images ? row.images.trim() : '';
-                    const innerHTML = \`
-                        <div class="relative w-full h-48 bg-slate-100 overflow-hidden">
-                            <img src="\${imgUrl || 'https://placehold.co/600x400/slate/lightgray?text=Image'}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/slate/lightgray?text=Broken+Image+Link'"/>
-                        </div>
-                        \${row.content ? \`<div class="p-4 text-xs text-slate-700 bg-white border-t border-slate-100/60 leading-relaxed font-semibold">\${row.content}</div>\` : ''}
-                    \`;
-
-                    if (row.link) {
-                        wrapper.innerHTML = \`<a href="\${row.link}" class="block hover:opacity-95 transition">\${innerHTML}</a>\`;
-                    } else {
-                        wrapper.innerHTML = innerHTML;
-                    }
-                } 
-                else if (row.type === 'text-area') {
-                    wrapper.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100/60 flex flex-col gap-2.5";
-                    wrapper.innerHTML = \`
-                        <p class="text-xs text-slate-600 leading-relaxed font-normal">\${row.content || "Description text empty."}</p>
-                        \${row.link ? \`<a href="\${row.link}" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1.5 mt-1">Read More <i class="fa-solid fa-arrow-right text-[9px]"></i></a>\` : ''}
-                    \`;
-                } 
-                else if (row.type === 'embed-iframe') {
-                    if (row.link && row.link.includes('<iframe')) {
-                        wrapper.innerHTML = \`
-                            <div class="relative w-full overflow-hidden leading-none">\${row.link}</div>
-                            \${row.content ? \`<div class="p-2.5 text-[10px] text-slate-500 font-semibold bg-slate-50 text-center border-t border-slate-100">\${row.content}</div>\` : ''}
-                        \`;
-                    }
-                }
-
-                mainStream.appendChild(wrapper);
-            });
-        }
-
-        // Inline active Slide shifter operations
-        let currentSlideIdx = 0;
-        function shiftSlide(direction, imagesArr) {
-            currentSlideIdx += direction;
-            if (currentSlideIdx < 0) currentSlideIdx = imagesArr.length - 1;
-            if (currentSlideIdx >= imagesArr.length) currentSlideIdx = 0;
-
-            const img = document.getElementById('carousel-img');
-            img.style.opacity = 0;
-            setTimeout(() => {
-                img.src = imagesArr[currentSlideIdx];
-                img.style.opacity = 1;
-            }, 120);
-
-            const dots = document.getElementById('carousel-indicators').children;
-            for (let i = 0; i < dots.length; i++) {
-                if (i === currentSlideIdx) {
-                    dots[i].className = "w-3 h-1.5 rounded-full bg-indigo-500 transition-all duration-200";
-                } else {
-                    dots[i].className = "w-1.5 h-1.5 rounded-full bg-slate-300/60 transition-all duration-200";
-                }
-            }
-        }
-    </script>
-</body>
-</html>`;
-        }
-
+        // Export Triggering Method
         function exportHTML() {
             const rawOutput = generateCompleteExportHTML();
             const blob = new Blob([rawOutput], { type: "text/html;charset=utf-8" });
