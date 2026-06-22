@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheet2Site Mobile Builder</title>
+    <!-- Tailwind CSS for modern responsive layout styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for grid & control UI icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Hide scrollbars but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col overflow-x-hidden">
+
+    <!-- App Navigation Header -->
+    <header class="bg-slate-850 border-b border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-md shadow-indigo-900/30">
+                <i class="fa-solid fa-table-cells-large text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                    Sheet2Site <span class="bg-indigo-500/10 text-indigo-400 text-xs px-2 py-0.5 rounded-full border border-indigo-500/20">Mobile Builder</span>
+                </h1>
+                <p class="text-xs text-slate-400">Build, preview, and export clean static websites easily</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="triggerReset()" class="bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+            <button onclick="exportHTML()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg shadow-emerald-950/20 transition flex items-center gap-2">
+                <i class="fa-solid fa-file-arrow-down"></i> Export Mobile Site
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+        
+        <!-- Left Pane: Sheets-Like Grid Editor & Image Resizer -->
+        <section class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Page Manager Strip -->
+            <div class="bg-slate-800/50 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-2">Pages:</span>
+                    <div id="page-tabs" class="flex gap-2">
+                        <!-- Dynamic page buttons injected here -->
+                    </div>
+                    <button onclick="createNewPage()" class="text-indigo-400 hover:text-indigo-300 p-1.5 rounded-lg hover:bg-slate-800 transition text-sm flex items-center gap-1.5" title="Add Page">
+                        <i class="fa-solid fa-plus"></i> <span class="text-xs">New Page</span>
+                    </button>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button id="delete-page-btn" onclick="deleteCurrentPage()" class="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-can"></i> Delete Page
+                    </button>
+                </div>
+            </div>
+
+            <!-- Google Sheets Style Table Workspace -->
+            <div class="bg-slate-800/30 border border-slate-800 rounded-xl flex flex-col overflow-hidden shadow-xl">
+                <div class="p-4 border-b border-slate-800 bg-slate-800/50 flex flex-wrap justify-between items-center gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <h2 class="text-sm font-semibold text-slate-200">Layout Spreadsheet Rows</h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="addNewRow()" class="bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> Add Component Row
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scrollable Spreadsheet Frame -->
+                <div class="overflow-x-auto max-w-full">
+                    <table class="w-full text-left border-collapse table-auto min-w-[800px]">
+                        <thead>
+                            <tr class="bg-slate-850 border-b border-slate-800 text-slate-400 text-xs font-semibold uppercase tracking-wider">
+                                <th class="py-3 px-4 text-center w-12">Move</th>
+                                <th class="py-3 px-4 w-40">Component Type</th>
+                                <th class="py-3 px-4">Primary Content / Title</th>
+                                <th class="py-3 px-4">Image Source(s) (URLs/Base64)</th>
+                                <th class="py-3 px-4">Redirect / Link URL</th>
+                                <th class="py-3 px-4 text-center w-16">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="spreadsheet-body" class="divide-y divide-slate-800/60">
+                            <!-- Injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Local Image Chooser & Optimizer -->
+            <div class="bg-slate-800/40 border border-slate-800 rounded-xl p-5 flex flex-col gap-4">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i> Local Image Chooser & Base64 Encoder
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Convert offline pictures or photos into optimized web formats. Avoid using broken local URLs by generating inline image strings!
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                    <div class="md:col-span-4">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Upload Local Image</label>
+                        <input type="file" id="image-picker-input" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-indigo-400 hover:file:bg-slate-750 cursor-pointer bg-slate-900 rounded-lg p-1.5 border border-slate-800" />
+                    </div>
+                    
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Output Size Preset</label>
+                        <select id="thumbnail-quality" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-2.5 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                            <option value="120">Mini Thumbnail (120px)</option>
+                            <option value="300" selected>Standard Content Box (300px)</option>
+                            <option value="600">High Quality Mobile (600px)</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-5 flex gap-2 pt-5">
+                        <button onclick="processSelectedImage()" class="flex-1 bg-slate-850 hover:bg-slate-800 text-slate-200 border border-slate-750 py-2 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-compress animate-pulse"></i> Optimize Image
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Resizer Output Panel -->
+                <div id="image-output-panel" class="hidden grid-cols-1 md:grid-cols-12 gap-4 bg-slate-900/50 border border-slate-800 p-3.5 rounded-lg">
+                    <div class="md:col-span-3 flex justify-center items-center">
+                        <img id="image-preview-thumbnail" class="max-h-24 max-w-full rounded-md border border-slate-800 shadow shadow-black/20" src="" alt="Thumbnail" />
+                    </div>
+                    <div class="md:col-span-9 flex flex-col justify-between gap-2">
+                        <div class="text-xs">
+                            <span class="text-slate-400 block font-medium">Inline Optimized Base64 Content String</span>
+                            <span class="text-[10px] text-emerald-400" id="image-info-metrics">Size: Calculating...</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="copyGeneratedBase64()" class="flex-1 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 py-1.5 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-copy"></i> Copy Base64 String
+                            </button>
+                            <button id="quick-insert-btn" class="flex-1 bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 py-1.5 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-arrow-turn-up"></i> Quick-Insert into Current Page
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global Footer Settings -->
+            <div class="bg-slate-800/40 border border-slate-800 rounded-xl p-5 flex flex-col gap-4">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-window-minimize text-indigo-400"></i> Global Footer & General Branding Settings
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">This text appears identically at the very bottom of every page.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Footer Copyright/Branding Text</label>
+                        <input type="text" id="footer-text-input" oninput="updateFooterContent(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="© 2026 My Mobile Page. Built with Sheet2Site." />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Global Website Name</label>
+                        <input type="text" id="site-title-input" oninput="updateSiteTitle(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-lg py-2 px-3 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="My Mobile Hub" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Pane: Real-Time Mobile Device Mock Preview -->
+        <section class="lg:col-span-4 flex flex-col gap-4">
+            <div class="sticky top-6 flex flex-col items-center">
+                <div class="text-sm font-semibold text-slate-400 mb-3 flex items-center gap-1.5 self-start">
+                    <i class="fa-solid fa-mobile-screen-button text-indigo-400"></i> Live Mock Device View
+                </div>
+
+                <!-- Mock Smartphone Shell Frame -->
+                <div class="relative mx-auto w-[330px] h-[640px] bg-slate-950 rounded-[44px] p-3.5 shadow-2xl border-4 border-slate-850 ring-8 ring-slate-800/40 flex flex-col overflow-hidden">
+                    
+                    <!-- iPhone Island/Notch Mockup -->
+                    <div class="absolute top-2.5 left-1/2 transform -translate-x-1/2 w-28 h-4.5 bg-slate-950 rounded-full z-50 flex items-center justify-between px-3">
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-900"></span>
+                        <span class="w-6 h-1 rounded-full bg-slate-900"></span>
+                    </div>
+
+                    <!-- Smartphone Screen View Area -->
+                    <div class="w-full h-full bg-white rounded-[32px] overflow-hidden flex flex-col text-slate-900 relative">
+                        <!-- Navigation bar of the mobile view -->
+                        <nav class="bg-indigo-700 text-white px-4 py-3 flex items-center justify-between shadow-sm shrink-0 mt-2 z-10">
+                            <span class="font-bold text-sm tracking-tight" id="preview-brand-name">My Mobile Hub</span>
+                            
+                            <!-- Simple Page Dropdown -->
+                            <div class="relative inline-block text-left">
+                                <button onclick="toggleMobileDropdown()" class="bg-indigo-800 hover:bg-indigo-900/40 text-white px-2.5 py-1 rounded text-xs font-semibold inline-flex items-center gap-1 transition focus:outline-none">
+                                    <span id="preview-active-page-name">Home</span>
+                                    <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                                </button>
+                                <div id="preview-nav-dropdown" class="hidden absolute right-0 mt-1 w-32 bg-white rounded-lg shadow-xl border border-slate-200 overflow-hidden z-50 text-slate-800 text-xs">
+                                    <!-- Options injected here -->
+                                </div>
+                            </div>
+                        </nav>
+
+                        <!-- Dynamic Content Stream -->
+                        <div id="preview-body" class="flex-1 overflow-y-auto bg-slate-50 flex flex-col p-3 gap-3 no-scrollbar">
+                            <!-- Injected by Render Engine -->
+                        </div>
+
+                        <!-- Static Footer inside Frame -->
+                        <footer class="bg-slate-100 text-slate-500 border-t border-slate-200 text-center py-2.5 text-[10px] shrink-0 font-medium" id="preview-footer-text">
+                            © 2026 My Mobile Page. Built with Sheet2Site.
+                        </footer>
+                    </div>
+                </div>
+                
+                <p class="text-[11px] text-slate-400 mt-3 text-center px-4">
+                    Tip: Any changes made in the spreadsheet grids update the mobile view dynamically! You can tap on buttons or drop-down links above to test page flows.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- UI Custom Toast Notifications -->
+    <div id="toast" class="fixed bottom-6 left-6 bg-slate-800 border border-slate-700 px-4 py-3 rounded-xl shadow-2xl text-slate-200 text-xs flex items-center gap-2 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none z-[100]">
+        <i class="fa-solid fa-info bg-indigo-600/25 text-indigo-400 p-1.5 rounded-md text-[10px] h-6 w-6 flex items-center justify-center"></i>
+        <span id="toast-message">Page updated</span>
+    </div>
+
+    <script>
+        // App State
+        let siteTitle = "My Mobile Hub";
+        let footerText = "© 2026 My Mobile Page. Built with Sheet2Site.";
+        let activePageIndex = 0;
+        let generatedBase64Data = ""; // Cached image builder output
+
+        // Base Data Setup: Multipage Support with structured Google Sheets format
+        let sitePages = [
+            {
+                name: "Home",
+                rows: [
+                    {
+                        type: "header-nav",
+                        content: "Welcome to Our Hub",
+                        images: "",
+                        link: ""
+                    },
+                    {
+                        type: "image-carousel",
+                        content: "Carousel Caption",
+                        images: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600,https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600",
+                        link: "#portfolio"
+                    },
+                    {
+                        type: "static-image",
+                        content: "Browse our official merchandise",
+                        images: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=600",
+                        link: "https://github.com"
+                    },
+                    {
+                        type: "text-area",
+                        content: "We make responsive, clean designs directly from a custom mobile web builder template. All links, static pages, and embeds function completely off the grid.",
+                        images: "",
+                        link: ""
+                    },
+                    {
+                        type: "embed-iframe",
+                        content: "Google Map Embed",
+                        images: "",
+                        link: `<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434509374!2d144.9537353153158!3d-37.81362797975171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11fd81%3A0xf577d1f5b6f53f2c!2sFederation%20Square!5e0!3m2!1sen!2sus!4v1614062000000!5m2!1sen!2sus" width="100%" height="220" style="border:0;" allowfullscreen="" loading="lazy"></iframe>`
+                    }
+                ]
+            },
+            {
+                name: "About Us",
+                rows: [
+                    {
+                        type: "header-nav",
+                        content: "Who We Are",
+                        images: "",
+                        link: ""
+                    },
+                    {
+                        type: "text-area",
+                        content: "This represents a secondary page in your simple mobile static routing tree. Customize row types dynamically to shape different pages instantly.",
+                        images: "",
+                        link: ""
+                    },
+                    {
+                        type: "static-image",
+                        content: "Our Creative Workshop Team",
+                        images: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600",
+                        link: ""
+                    }
+                ]
+            }
+        ];
+
+        // Boot and startup operations
+        window.onload = function() {
+            renderPageTabs();
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+        };
+
+        function renderPageTabs() {
+            const tabContainer = document.getElementById('page-tabs');
+            tabContainer.innerHTML = '';
+            
+            sitePages.forEach((page, index) => {
+                const btn = document.createElement('button');
+                btn.className = `px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                    activePageIndex === index 
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-950/40' 
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`;
+                btn.innerHTML = `<i class="fa-solid fa-file-invoice text-[10px] mr-1.5 opacity-80"></i> ${page.name}`;
+                btn.onclick = () => switchPage(index);
+                tabContainer.appendChild(btn);
+            });
+
+            // Toggle deletion ability based on index safety
+            const delBtn = document.getElementById('delete-page-btn');
+            if (sitePages.length <= 1) {
+                delBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                delBtn.disabled = true;
+            } else {
+                delBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                delBtn.disabled = false;
+            }
+        }
+
+        function switchPage(index) {
+            activePageIndex = index;
+            renderPageTabs();
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+            showToast(`Switched to page: ${sitePages[index].name}`);
+        }
+
+        function createNewPage() {
+            const rawName = prompt("Enter a page name (e.g. Portfolio, Contact):");
+            if (!rawName) return;
+            const pageName = rawName.trim();
+            if (pageName === '') return;
+
+            sitePages.push({
+                name: pageName,
+                rows: [
+                    {
+                        type: "header-nav",
+                        content: pageName,
+                        images: "",
+                        link: ""
+                    },
+                    {
+                        type: "text-area",
+                        content: `This is your brand new "${pageName}" mobile view structure. Click below to add layout blocks or modify existing spreadsheets.`,
+                        images: "",
+                        link: ""
+                    }
+                ]
+            });
+
+            activePageIndex = sitePages.length - 1;
+            renderPageTabs();
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+            showToast(`Page "${pageName}" added!`);
+        }
+
+        function deleteCurrentPage() {
+            if (sitePages.length <= 1) return;
+            const confirmDel = confirm(`Are you sure you want to delete the page "${sitePages[activePageIndex].name}"?`);
+            if (!confirmDel) return;
+
+            sitePages.splice(activePageIndex, 1);
+            activePageIndex = 0;
+            renderPageTabs();
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+            showToast("Page deleted");
+        }
+
+        function renderSpreadsheetRows() {
+            const tableBody = document.getElementById('spreadsheet-body');
+            tableBody.innerHTML = '';
+
+            const currentRows = sitePages[activePageIndex].rows;
+
+            currentRows.forEach((row, rIndex) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/10 transition duration-150 border-b border-slate-800/40 text-slate-300 text-xs";
+                
+                tr.innerHTML = `
+                    <td class="py-2 px-3 text-center">
+                        <div class="flex flex-col gap-0.5 justify-center items-center">
+                            <button onclick="moveRow(${rIndex}, -1)" class="text-slate-500 hover:text-indigo-400 p-0.5" title="Move Up">
+                                <i class="fa-solid fa-chevron-up"></i>
+                            </button>
+                            <button onclick="moveRow(${rIndex}, 1)" class="text-slate-500 hover:text-indigo-400 p-0.5" title="Move Down">
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="py-2 px-3">
+                        <select onchange="updateRowField(${rIndex}, 'type', this.value)" class="w-full bg-slate-900 border border-slate-800 rounded px-2 py-1.5 text-xs text-indigo-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-medium">
+                            <option value="header-nav" ${row.type === 'header-nav' ? 'selected' : ''}>Header Title</option>
+                            <option value="image-carousel" ${row.type === 'image-carousel' ? 'selected' : ''}>Image Carousel</option>
+                            <option value="static-image" ${row.type === 'static-image' ? 'selected' : ''}>Static Image Box</option>
+                            <option value="text-area" ${row.type === 'text-area' ? 'selected' : ''}>Rich Text Paragraph</option>
+                            <option value="embed-iframe" ${row.type === 'embed-iframe' ? 'selected' : ''}>Iframe Map / Media</option>
+                        </select>
+                    </td>
+                    <td class="py-2 px-3">
+                        <textarea rows="1" oninput="updateRowField(${rIndex}, 'content', this.value)" placeholder="Primary title, caption, text body, or HTML code" class="w-full min-h-[36px] bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y">${row.content}</textarea>
+                    </td>
+                    <td class="py-2 px-3">
+                        <textarea rows="1" oninput="updateRowField(${rIndex}, 'images', this.value)" placeholder="Comma separated URLs for carousel" class="w-full min-h-[36px] bg-slate-900 border border-slate-800 rounded px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-y" ${row.type === 'header-nav' || row.type === 'text-area' || row.type === 'embed-iframe' ? 'disabled bg-slate-950/40 border-slate-850/50' : ''}>${row.images}</textarea>
+                    </td>
+                    <td class="py-2 px-3">
+                        <input type="text" oninput="updateRowField(${rIndex}, 'link', this.value)" placeholder="Redirect URL link, or page hash (e.g., #about-us)" class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-2 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500" value="${row.link}" />
+                    </td>
+                    <td class="py-2 px-3 text-center">
+                        <button onclick="deleteRow(${rIndex})" class="text-slate-500 hover:text-red-400 hover:bg-red-500/15 p-2 rounded transition" title="Delete Row">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function updateRowField(rowIndex, field, value) {
+            sitePages[activePageIndex].rows[rowIndex][field] = value;
+            
+            // Re-render specifically preview without disrupting cell focus on typing
+            debounceRenderPreview();
+        }
+
+        let debounceTimer;
+        function debounceRenderPreview() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                renderPreviewDevice();
+            }, 300);
+        }
+
+        function addNewRow() {
+            sitePages[activePageIndex].rows.push({
+                type: "text-area",
+                content: "Customize this text body. Select custom links or images to attach styling dynamics.",
+                images: "",
+                link: ""
+            });
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+            showToast("New component block added!");
+        }
+
+        function deleteRow(index) {
+            sitePages[activePageIndex].rows.splice(index, 1);
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+            showToast("Component deleted");
+        }
+
+        function moveRow(index, direction) {
+            const rows = sitePages[activePageIndex].rows;
+            const newIndex = index + direction;
+            
+            if (newIndex < 0 || newIndex >= rows.length) return; // Out of bounds
+
+            // Swap values
+            const temp = rows[index];
+            rows[index] = rows[newIndex];
+            rows[newIndex] = temp;
+
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+        }
+
+        function processSelectedImage() {
+            const fileInput = document.getElementById('image-picker-input');
+            const qualitySelect = document.getElementById('thumbnail-quality');
+            
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert("Please select a photo file from your hard drive or camera folder first.");
+                return;
+            }
+
+            const targetWidth = parseInt(qualitySelect.value, 10);
+            const originalFile = fileInput.files[0];
+            const fileReader = new FileReader();
+
+            fileReader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Create an offscreen HTML5 canvas to compress layout dimensions
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Calculate maintaining original aspect ratio details
+                    const originalWidth = img.width;
+                    const originalHeight = img.height;
+                    const scaleFactor = targetWidth / originalWidth;
+                    const targetHeight = Math.round(originalHeight * scaleFactor);
+
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
+
+                    // Draw image scaled down on canvas
+                    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                    // Output optimized jpeg string representation
+                    generatedBase64Data = canvas.toDataURL('image/jpeg', 0.82);
+
+                    // Render to preview layout
+                    const previewElement = document.getElementById('image-preview-thumbnail');
+                    previewElement.src = generatedBase64Data;
+
+                    const metricsElement = document.getElementById('image-info-metrics');
+                    const sizeInKB = Math.round((generatedBase64Data.length * 3/4) / 1024);
+                    metricsElement.innerText = `Size Preset: ${targetWidth}px wide | Inline weight: ~${sizeInKB} KB`;
+
+                    // Show panel
+                    document.getElementById('image-output-panel').classList.remove('hidden');
+                    document.getElementById('image-output-panel').classList.add('grid');
+
+                    // Bind dynamic inserting helper onto button
+                    const insertBtn = document.getElementById('quick-insert-btn');
+                    insertBtn.onclick = function() {
+                        quickInsertBase64ToTable(generatedBase64Data);
+                    };
+
+                    showToast("Image optimized successfully!");
+                };
+                img.src = event.target.result;
+            };
+
+            fileReader.readAsDataURL(originalFile);
+        }
+
+        function copyGeneratedBase64() {
+            if (!generatedBase64Data) return;
+            
+            // Safe execution across modern systems matching workspace conditions
+            const copyTextarea = document.createElement("textarea");
+            copyTextarea.value = generatedBase64Data;
+            document.body.appendChild(copyTextarea);
+            copyTextarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(copyTextarea);
+
+            showToast("Copied optimized Base64 string to clipboard!");
+        }
+
+        function quickInsertBase64ToTable(base64Str) {
+            // Target first found image block in active page, or append a new one
+            let targetRow = sitePages[activePageIndex].rows.find(row => row.type === 'static-image' || row.type === 'image-carousel');
+            
+            if (targetRow) {
+                if (targetRow.type === 'image-carousel' && targetRow.images !== "") {
+                    // Append to carousel CSV
+                    targetRow.images += "," + base64Str;
+                } else {
+                    targetRow.images = base64Str;
+                }
+                showToast("Inserted image into existing block!");
+            } else {
+                // Construct new static image component
+                sitePages[activePageIndex].rows.push({
+                    type: "static-image",
+                    content: "Newly added image capture",
+                    images: base64Str,
+                    link: ""
+                });
+                showToast("Created a new Image block and inserted data!");
+            }
+
+            renderSpreadsheetRows();
+            renderPreviewDevice();
+        }
+
+        function renderPreviewDevice() {
+            const previewBody = document.getElementById('preview-body');
+            previewBody.innerHTML = '';
+
+            document.getElementById('preview-brand-name').innerText = siteTitle;
+            document.getElementById('preview-active-page-name').innerText = sitePages[activePageIndex].name;
+            document.getElementById('preview-footer-text').innerText = footerText;
+
+            // Render mobile-specific dropdown routes
+            const dropdownContainer = document.getElementById('preview-nav-dropdown');
+            dropdownContainer.innerHTML = '';
+            sitePages.forEach((page, index) => {
+                const opt = document.createElement('button');
+                opt.className = "w-full text-left px-3 py-2 hover:bg-slate-100 transition border-b border-slate-100 last:border-0 font-medium text-slate-800 text-[11px] block";
+                opt.innerText = page.name;
+                opt.onclick = () => {
+                    switchPage(index);
+                    toggleMobileDropdown();
+                };
+                dropdownContainer.appendChild(opt);
+            });
+
+            // Populate preview with mock DOM segments matching active component state
+            const currentRows = sitePages[activePageIndex].rows;
+
+            currentRows.forEach((row) => {
+                const blockDiv = document.createElement('div');
+                blockDiv.className = "bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden";
+
+                if (row.type === 'header-nav') {
+                    blockDiv.className = "bg-slate-900 text-white p-3 rounded-xl text-center shadow-md shadow-indigo-950/10";
+                    blockDiv.innerHTML = `<h2 class="text-xs uppercase tracking-widest font-bold text-indigo-400">${row.content || "Welcome Header"}</h2>`;
+                } 
+                else if (row.type === 'image-carousel') {
+                    // Extract image urls/base64 split
+                    const imagesArr = row.images ? row.images.split(',').map(s => s.trim()).filter(s => s) : [];
+                    
+                    if (imagesArr.length === 0) {
+                        blockDiv.innerHTML = `
+                            <div class="bg-slate-100 text-slate-400 p-8 text-center text-xs flex flex-col items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-images text-lg text-slate-300"></i> No Carousel Images Supplied
+                            </div>`;
+                    } else {
+                        // Display primary item of Carousel mock with slider selectors
+                        blockDiv.innerHTML = `
+                            <div class="relative w-full h-36 bg-slate-900">
+                                <img src="${imagesArr[0]}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/indigo/white?text=No+Image+Found'"/>
+                                <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                                    ${imagesArr.map((_, i) => `<span class="w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-indigo-500' : 'bg-slate-300/60'}"></span>`).join('')}
+                                </div>
+                                <div class="absolute top-1/2 -translate-y-1/2 left-2 w-5 h-5 bg-black/40 text-white rounded-full flex items-center justify-center text-[9px] cursor-pointer"><i class="fa-solid fa-chevron-left"></i></div>
+                                <div class="absolute top-1/2 -translate-y-1/2 right-2 w-5 h-5 bg-black/40 text-white rounded-full flex items-center justify-center text-[9px] cursor-pointer"><i class="fa-solid fa-chevron-right"></i></div>
+                            </div>
+                            ${row.content ? `<div class="p-2 text-[10px] text-slate-600 bg-white font-medium text-center border-t border-slate-50">${row.content}</div>` : ''}
+                        `;
+                    }
+                } 
+                else if (row.type === 'static-image') {
+                    const imgUrl = row.images ? row.images.trim() : '';
+                    const innerHTML = `
+                        <div class="relative w-full h-40 bg-slate-100 overflow-hidden">
+                            <img src="${imgUrl || 'https://placehold.co/600x400/slate/lightgray?text=Placeholder'}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/slate/lightgray?text=Broken+Image+Link'"/>
+                        </div>
+                        ${row.content ? `<div class="p-2.5 text-xs text-slate-700 bg-white border-t border-slate-100 font-medium">${row.content}</div>` : ''}
+                    `;
+
+                    if (row.link) {
+                        blockDiv.innerHTML = `<a href="${row.link}" target="_blank" class="block cursor-pointer hover:opacity-95 transition relative">${innerHTML}<div class="absolute top-2 right-2 bg-indigo-600 text-white px-2 py-0.5 rounded text-[8px] font-bold shadow-md"><i class="fa-solid fa-link"></i> Link</div></a>`;
+                    } else {
+                        blockDiv.innerHTML = innerHTML;
+                    }
+                } 
+                else if (row.type === 'text-area') {
+                    const hasLink = row.link ? row.link.trim() : '';
+                    blockDiv.className = "bg-white p-3.5 rounded-xl shadow-sm border border-slate-100 flex flex-col gap-2";
+                    blockDiv.innerHTML = `
+                        <p class="text-xs text-slate-600 leading-relaxed font-normal">${row.content || "Empty description content box."}</p>
+                        ${hasLink ? `<a href="${hasLink}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1 mt-1">Read More Details <i class="fa-solid fa-up-right-from-square text-[8px]"></i></a>` : ''}
+                    `;
+                } 
+                else if (row.type === 'embed-iframe') {
+                    const rawHTML = row.link ? row.link.trim() : '';
+                    if (rawHTML.includes('<iframe')) {
+                        blockDiv.innerHTML = `
+                            <div class="relative w-full overflow-hidden rounded-xl bg-slate-900 leading-none">
+                                ${rawHTML}
+                            </div>
+                            ${row.content ? `<div class="p-2 text-[10px] text-slate-500 font-semibold bg-slate-50 text-center border-t border-slate-100">${row.content}</div>` : ''}
+                        `;
+                    } else {
+                        blockDiv.className = "bg-slate-100 border border-slate-200 p-4 rounded-xl text-center text-xs text-slate-400";
+                        blockDiv.innerHTML = `<i class="fa-solid fa-code text-slate-300 text-base mb-1 block"></i> Insert &lt;iframe&gt; code in redirect column.`;
+                    }
+                }
+
+                previewBody.appendChild(blockDiv);
+            });
+        }
+
+        // Toggle state drawer for drop down previews on device
+        function toggleMobileDropdown() {
+            const list = document.getElementById('preview-nav-dropdown');
+            list.classList.toggle('hidden');
+        }
+
+        // Input handler connectors
+        function updateFooterContent(val) {
+            footerText = val;
+            document.getElementById('preview-footer-text').innerText = val;
+        }
+
+        function updateSiteTitle(val) {
+            siteTitle = val;
+            document.getElementById('preview-brand-name').innerText = val;
+        }
+
+        function triggerReset() {
+            const check = confirm("Do you want to reset the configuration grid back to default tutorial layout?");
+            if (!check) return;
+            
+            location.reload();
+        }
+
+        function generateCompleteExportHTML() {
+            // Minimize template size by exporting a stateful client router package
+            const pagesJson = JSON.stringify(sitePages);
+            
+            return `<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>${siteTitle}</title>
+    <!-- Tailwind CSS Engine for responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
+
+    <!-- Top Site Navigation Header -->
+    <nav class="bg-indigo-700 text-white px-5 py-4 flex items-center justify-between shadow-md shrink-0 sticky top-0 z-50">
+        <span class="font-extrabold text-base tracking-tight">${siteTitle}</span>
+        
+        <!-- Interactive Dropdown Routing Selector -->
+        <div class="relative inline-block text-left">
+            <button onclick="toggleExportDropdown()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all focus:outline-none shadow-sm">
+                <span id="active-routing-name">Loading...</span>
+                <i class="fa-solid fa-chevron-down text-[9px] opacity-80"></i>
+            </button>
+            <div id="export-nav-dropdown" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden z-50 text-slate-800 text-xs py-1">
+                <!-- Dropdown page dynamic routing options injected by core framework -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Stream Area -->
+    <main id="main-content-stream" class="flex-1 max-w-md mx-full md:mx-auto w-full p-4 flex flex-col gap-4 no-scrollbar">
+        <!-- Rendered dynamics will populate here dynamically depending on Hash index -->
+    </main>
+
+    <!-- Unified Standard Footer -->
+    <footer class="bg-white text-slate-400 border-t border-slate-100 text-center py-4 text-xs font-medium shrink-0 shadow-inner">
+        ${footerText}
+    </footer>
+
+    <!-- Site Core Processing Controller Engine -->
+    <script>
+        // Generated Pages Data Array Matrix
+        const siteData = ${pagesJson};
+        let activePageIdx = 0;
+
+        window.onload = function() {
+            // Configure Routing Hash Listeners
+            if (window.location.hash) {
+                const targetHash = window.location.hash.substring(1);
+                const foundIndex = siteData.findIndex(page => cleanHashName(page.name) === targetHash);
+                if (foundIndex !== -1) {
+                    activePageIdx = foundIndex;
+                }
+            }
+            renderAppScreen();
+
+            // Intercept hash change dynamics
+            window.addEventListener('hashchange', () => {
+                const newHash = window.location.hash.substring(1);
+                const foundIndex = siteData.findIndex(page => cleanHashName(page.name) === newHash);
+                if (foundIndex !== -1) {
+                    activePageIdx = foundIndex;
+                    renderAppScreen();
+                }
+            });
+        };
+
+        function cleanHashName(name) {
+            return encodeURIComponent(name.toLowerCase().replace(/\\s+/g, '-'));
+        }
+
+        function toggleExportDropdown() {
+            const list = document.getElementById('export-nav-dropdown');
+            list.classList.toggle('hidden');
+        }
+
+        function switchExportPage(index) {
+            activePageIdx = index;
+            window.location.hash = cleanHashName(siteData[index].name);
+            toggleExportDropdown();
+            renderAppScreen();
+        }
+
+        function renderAppScreen() {
+            const targetPage = siteData[activePageIdx];
+            document.getElementById('active-routing-name').innerText = targetPage.name;
+            
+            const dropdown = document.getElementById('export-nav-dropdown');
+            dropdown.innerHTML = '';
+            
+            siteData.forEach((page, idx) => {
+                const item = document.createElement('button');
+                item.className = "w-full text-left px-4 py-2.5 hover:bg-slate-50 transition border-b border-slate-100 last:border-0 font-medium text-slate-700 text-xs block flex items-center justify-between";
+                item.innerHTML = \`<span>\${page.name}</span> \${idx === activePageIdx ? '<i class="fa-solid fa-circle-check text-indigo-600"></i>' : ''}\`;
+                item.onclick = () => switchExportPage(idx);
+                dropdown.appendChild(item);
+            });
+
+            // Populate Content Frame Blocks
+            const mainStream = document.getElementById('main-content-stream');
+            mainStream.innerHTML = '';
+
+            targetPage.rows.forEach(row => {
+                const wrapper = document.createElement('div');
+                wrapper.className = "bg-white rounded-2xl shadow-sm border border-slate-100/60 overflow-hidden";
+
+                if (row.type === 'header-nav') {
+                    wrapper.className = "bg-slate-900 text-white p-4 rounded-2xl text-center shadow-lg shadow-indigo-950/5";
+                    wrapper.innerHTML = \`<h2 class="text-xs uppercase tracking-widest font-extrabold text-indigo-400">\${row.content || "Header Header"}</h2>\`;
+                } 
+                else if (row.type === 'image-carousel') {
+                    const imagesArr = row.images ? row.images.split(',').map(s => s.trim()).filter(s => s) : [];
+                    if (imagesArr.length > 0) {
+                        wrapper.innerHTML = \`
+                            <div class="relative w-full h-44 bg-slate-900 overflow-hidden" id="carousel-frame">
+                                <img id="carousel-img" src="\${imagesArr[0]}" class="w-full h-full object-cover transition-all duration-300" onerror="this.src='https://placehold.co/600x400/indigo/white?text=No+Image+Found'"/>
+                                <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" id="carousel-indicators">
+                                    \${imagesArr.map((_, i) => \`<span class="w-1.5 h-1.5 rounded-full transition-all duration-200 \${i === 0 ? 'bg-indigo-500 w-3' : 'bg-slate-300/60'}"></span>\`).join('')}
+                                </div>
+                                <button onclick="shiftSlide(-1, \${JSON.stringify(imagesArr).replace(/"/g, '&quot;')})" class="absolute top-1/2 -translate-y-1/2 left-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button onclick="shiftSlide(1, \${JSON.stringify(imagesArr).replace(/"/g, '&quot;')})" class="absolute top-1/2 -translate-y-1/2 right-3 w-7 h-7 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center text-xs transition active:scale-90"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                            \${row.content ? \`<div class="p-3 text-xs text-slate-500 bg-white font-medium text-center border-t border-slate-50">\${row.content}</div>\` : ''}
+                        \`;
+                    }
+                } 
+                else if (row.type === 'static-image') {
+                    const imgUrl = row.images ? row.images.trim() : '';
+                    const innerHTML = \`
+                        <div class="relative w-full h-48 bg-slate-100 overflow-hidden">
+                            <img src="\${imgUrl || 'https://placehold.co/600x400/slate/lightgray?text=Image'}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/slate/lightgray?text=Broken+Image+Link'"/>
+                        </div>
+                        \${row.content ? \`<div class="p-4 text-xs text-slate-700 bg-white border-t border-slate-100/60 leading-relaxed font-semibold">\${row.content}</div>\` : ''}
+                    \`;
+
+                    if (row.link) {
+                        wrapper.innerHTML = \`<a href="\${row.link}" class="block hover:opacity-95 transition">\${innerHTML}</a>\`;
+                    } else {
+                        wrapper.innerHTML = innerHTML;
+                    }
+                } 
+                else if (row.type === 'text-area') {
+                    wrapper.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-100/60 flex flex-col gap-2.5";
+                    wrapper.innerHTML = \`
+                        <p class="text-xs text-slate-600 leading-relaxed font-normal">\${row.content || "Description text empty."}</p>
+                        \${row.link ? \`<a href="\${row.link}" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition inline-flex items-center gap-1.5 mt-1">Read More <i class="fa-solid fa-arrow-right text-[9px]"></i></a>\` : ''}
+                    \`;
+                } 
+                else if (row.type === 'embed-iframe') {
+                    if (row.link && row.link.includes('<iframe')) {
+                        wrapper.innerHTML = \`
+                            <div class="relative w-full overflow-hidden leading-none">\${row.link}</div>
+                            \${row.content ? \`<div class="p-2.5 text-[10px] text-slate-500 font-semibold bg-slate-50 text-center border-t border-slate-100">\${row.content}</div>\` : ''}
+                        \`;
+                    }
+                }
+
+                mainStream.appendChild(wrapper);
+            });
+        }
+
+        // Inline active Slide shifter operations
+        let currentSlideIdx = 0;
+        function shiftSlide(direction, imagesArr) {
+            currentSlideIdx += direction;
+            if (currentSlideIdx < 0) currentSlideIdx = imagesArr.length - 1;
+            if (currentSlideIdx >= imagesArr.length) currentSlideIdx = 0;
+
+            const img = document.getElementById('carousel-img');
+            img.style.opacity = 0;
+            setTimeout(() => {
+                img.src = imagesArr[currentSlideIdx];
+                img.style.opacity = 1;
+            }, 120);
+
+            const dots = document.getElementById('carousel-indicators').children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === currentSlideIdx) {
+                    dots[i].className = "w-3 h-1.5 rounded-full bg-indigo-500 transition-all duration-200";
+                } else {
+                    dots[i].className = "w-1.5 h-1.5 rounded-full bg-slate-300/60 transition-all duration-200";
+                }
+            }
+        }
+    </script>
+</body>
+</html>`;
+        }
+
+        function exportHTML() {
+            const rawOutput = generateCompleteExportHTML();
+            const blob = new Blob([rawOutput], { type: "text/html;charset=utf-8" });
+            const localURL = URL.createObjectURL(blob);
+
+            const downloadLink = document.createElement("a");
+            downloadLink.href = localURL;
+            downloadLink.download = "index.html";
+            
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            showToast("Static Mobile Site HTML downloaded!");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            
+            toast.className = "fixed bottom-6 left-6 bg-slate-800 border border-slate-700 px-4 py-3 rounded-xl shadow-2xl text-slate-200 text-xs flex items-center gap-2 transform translate-y-0 opacity-100 transition-all duration-300 pointer-events-none z-[100]";
+            
+            setTimeout(() => {
+                toast.className = "fixed bottom-6 left-6 bg-slate-800 border border-slate-700 px-4 py-3 rounded-xl shadow-2xl text-slate-200 text-xs flex items-center gap-2 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none z-[100]";
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
